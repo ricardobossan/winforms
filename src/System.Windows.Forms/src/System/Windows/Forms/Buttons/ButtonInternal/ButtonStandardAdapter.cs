@@ -192,14 +192,6 @@ internal class ButtonStandardAdapter : ButtonBaseAdapter
             PaintField(e, layout, colors, colors.WindowText, true);
         }
 
-        //Added for https://github.com/dotnet/winforms/issues/6514
-        if (Application.RenderWithVisualStyles
-            && Control.FlatStyle == FlatStyle.Standard
-            && state == CheckState.Unchecked)
-        {
-            DrawRoundBorder(e);
-        }
-
         if (!Application.RenderWithVisualStyles)
         {
             Rectangle r = Control.ClientRectangle;
@@ -220,38 +212,6 @@ internal class ButtonStandardAdapter : ButtonBaseAdapter
                 ControlPaint.DrawBorderSimple(e, r, colors.ButtonShadow);
             }
         }
-    }
-
-    //Added for https://github.com/dotnet/winforms/issues/6514
-    private void DrawRoundBorder(PaintEventArgs e)
-    {
-        GraphicsPath path = new GraphicsPath();
-        Pen pen = SystemColors.ControlDarkDark.GetCachedPenScope();
-
-        int x = Control.ClientRectangle.X + 1;
-        int y = Control.ClientRectangle.Y + 1;
-        int width = Control.ClientRectangle.Width - 10;
-        int height = Control.ClientRectangle.Height - 10;
-        const int radius = 8;
-
-        // Top-left corner
-        path.AddArc(new Rectangle(x, y, radius, radius), 180, 90);
-
-        // Top-right corner
-        path.AddArc(new Rectangle(width, y, radius, radius), 270, 90);
-
-        // Bottom-right corner
-        path.AddArc(new Rectangle(width, height, radius, radius), 0, 90);
-
-        // Bottom-left corner
-        path.AddArc(new Rectangle(x, height, radius, radius), 90, 90);
-
-        // Back to Top-left corner
-        path.AddArc(new Rectangle(x, y, radius, radius), 180, 90);
-
-        var g = e.Graphics;
-        g.SmoothingMode = SmoothingMode.AntiAlias;
-        g.DrawPath(pen, path);
     }
 
     #region Layout
