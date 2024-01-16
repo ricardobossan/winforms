@@ -69,6 +69,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="AxInterop.WIA.dll">
+        <HintPath>
+          $(ArtifactsBinDir)\AxHosts\$(Configuration)\net472\AxInterop.WIA.dll
+        </HintPath>
+      </Reference>
+    <Reference Include="Interop.WIA.dll">
+      <HintPath>
+        $(ArtifactsBinDir)\AxHosts\$(Configuration)\net472\Interop.WIA.dll
+      </HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="AxInterop.WMPLib">
       <HintPath>$(ArtifactsBinDir)\AxHosts\$(Configuration)\net472\AxInterop.WMPLib.dll</HintPath>
     </Reference>

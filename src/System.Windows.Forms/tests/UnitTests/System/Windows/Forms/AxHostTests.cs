@@ -21,11 +21,49 @@ public class AxHostTests
 {
     private const string EmptyClsidString = "00000000-0000-0000-0000-000000000000";
     private const string WebBrowserClsidString = "8856f961-340a-11d0-a96b-00c04fd705a2";
+    class NewDialogWrapper : Control, ISupportInitialize
+    {
+        private NewDialog newDialogInstance;
+
+        public NewDialogWrapper()
+        {
+            newDialogInstance = new NewDialog();
+            // Additional initialization if needed
+        }
+
+        // Implement properties or methods to expose functionality of NewDialog if necessary
+
+        // Override necessary Control methods if needed
+
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NewDialog NewDialogInstance => newDialogInstance;
+
+        public void BeginInit() { } 
+        public void EndInit() { }
+    }
+
+    class NewDialog : CommonDialog
+    {
+        public override void Reset() => throw new NotImplementedException();
+        protected override bool RunDialog(nint hwndOwner) => throw new NotImplementedException();
+    }
 
     [WinFormsTheory]
     [InlineData(EmptyClsidString)]
     public void AxHost_Ctor_String(string clsid)
     {
+        using Form form = new();
+
+
+        using (NewDialogWrapper control2 = new NewDialogWrapper())
+        {
+            ((ISupportInitialize)control2).BeginInit();
+            form.Controls.Add(control2);
+            ((ISupportInitialize)control2).EndInit();
+
+            // Rest of the test case...
+        }
+
         using SubAxHost control = new(clsid);
         Assert.Null(control.AccessibleDefaultActionDescription);
         Assert.Null(control.AccessibleDescription);
@@ -3072,6 +3110,8 @@ public class AxHostTests
         Assert.Equal(0, styleChangedCallCount);
         Assert.Equal(0, createdCallCount);
     }
+
+
 
     private class SubComponentEditor : ComponentEditor
     {
