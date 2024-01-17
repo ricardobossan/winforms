@@ -31,35 +31,33 @@ partial class AxHosts
     /// </summary>
     private void InitializeComponent()
     {
-        System.ComponentModel.ComponentResourceManager resources = new(typeof(AxHosts));
-        this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
-        ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
-        this.SuspendLayout();
-        // 
-        // axWindowsMediaPlayer1
-        // 
-        this.axWindowsMediaPlayer1.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.axWindowsMediaPlayer1.Enabled = true;
-        this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(0, 0);
-        this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
-        this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-        this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(800, 450);
-        this.axWindowsMediaPlayer1.TabIndex = 0;
-        // 
-        // AxHosts
-        // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        this.ClientSize = new System.Drawing.Size(800, 450);
-        this.Controls.Add(this.axWindowsMediaPlayer1);
-        this.Name = "AxHosts";
-        this.Text = "Form1";
-        ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
-        this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AxHosts));
+            this.axSystemMonitor1 = new AxSystemMonitor.AxSystemMonitor();
+            ((System.ComponentModel.ISupportInitialize)(this.axSystemMonitor1)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // axSystemMonitor1
+            // 
+            this.axSystemMonitor1.Enabled = true;
+            this.axSystemMonitor1.Location = new System.Drawing.Point(0, 0);
+            this.axSystemMonitor1.Name = "axSystemMonitor1";
+            this.axSystemMonitor1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axSystemMonitor1.OcxState")));
+            this.axSystemMonitor1.Size = new System.Drawing.Size(300, 200);
+            this.axSystemMonitor1.TabIndex = 0;
+            // 
+            // AxHosts
+            // 
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.axSystemMonitor1);
+            this.Name = "AxHosts";
+            this.Text = "w";
+            ((System.ComponentModel.ISupportInitialize)(this.axSystemMonitor1)).EndInit();
+            this.ResumeLayout(false);
 
     }
 
     #endregion
 
     private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
+    private AxSystemMonitor.AxSystemMonitor axSystemMonitor1;
 }
