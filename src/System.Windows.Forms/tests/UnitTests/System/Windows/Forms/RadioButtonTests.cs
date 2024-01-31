@@ -1625,4 +1625,52 @@ public class RadioButtonTests
             return base.RaiseAutomationPropertyChangedEvent(propertyId, oldValue, newValue);
         }
     }
+
+    [WinFormsTheory]
+    [InlineData(Appearance.Button, FlatStyle.Standard)]
+    [InlineData(Appearance.Button, FlatStyle.Flat)]
+    [InlineData(Appearance.Button, FlatStyle.Popup)]
+    [InlineData(Appearance.Button, FlatStyle.System)]
+    [InlineData(Appearance.Normal, FlatStyle.Standard)]
+    [InlineData(Appearance.Normal, FlatStyle.Flat)]
+    [InlineData(Appearance.Normal, FlatStyle.Popup)]
+    [InlineData(Appearance.Normal, FlatStyle.System)]
+    public void RadioButton_OverChangeRectangle_Get(Appearance appearance, FlatStyle flatStyle)
+    {
+        SubRadioButton control = new()
+        {
+            Appearance = appearance,
+            FlatStyle = flatStyle
+        };
+
+        Rectangle overChangeRectangle = new();
+        // ButtonBase.Adapter prohibits this
+        if (appearance == Appearance.Normal && (flatStyle != FlatStyle.Standard && flatStyle != FlatStyle.Popup && flatStyle != FlatStyle.Flat))
+        {
+            Assert.ThrowsAny<Exception>(() => overChangeRectangle = control.OverChangeRectangle);
+
+            return;
+        }
+        else
+        {
+            overChangeRectangle = control.OverChangeRectangle;
+        }
+
+        if (control.FlatStyle == FlatStyle.Standard)
+        {
+            Assert.True(overChangeRectangle == new Rectangle(-1, -1, 1, 1));
+        }
+
+        if (control.Appearance == Appearance.Button)
+        {
+            if (control.FlatStyle != FlatStyle.Standard)
+            {
+                Assert.True(overChangeRectangle == control.ClientRectangle);
+            }
+        }
+        else if (control.FlatStyle != FlatStyle.Standard)
+        {
+            Assert.True(overChangeRectangle == control.Adapter.CommonLayout().Layout().CheckBounds);
+        }
+    }
 }

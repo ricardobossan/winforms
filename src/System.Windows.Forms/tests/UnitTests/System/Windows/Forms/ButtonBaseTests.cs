@@ -9244,6 +9244,52 @@ public class ButtonBaseTests
         Assert.Equal(0, createdCallCount);
     }
 
+    [WinFormsTheory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(1)]
+    public unsafe void Button_Flat_ValidBorder(int borderSize)
+    {
+        using SubButton button = new()
+        {
+            FlatStyle = FlatStyle.Flat,
+        };
+
+        Assert.Throws<NotSupportedException>(() => button.FlatAppearance.BorderColor = Color.Transparent);
+
+        if (borderSize < 0)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => button.FlatAppearance.BorderSize = borderSize);
+        }
+        else
+        {
+            button.FlatAppearance.BorderSize = borderSize;
+            Assert.Equal(borderSize, button.FlatAppearance.BorderSize);
+        }
+    }
+
+    [WinFormsTheory]
+    [InlineData(255, 0, 0)]
+    [InlineData(0, 255, 0)]
+    [InlineData(0, 0, 255)]
+    public unsafe void Button_Flat_ProperColor(int red, int green, int blue)
+    {
+        Color expectedColor = Color.FromArgb(red, green, blue);
+
+        using SubButton button = new()
+        {
+            FlatStyle = FlatStyle.Flat,
+            BackColor = expectedColor
+        };
+
+        button.FlatAppearance.CheckedBackColor = expectedColor;
+        button.FlatAppearance.BorderColor = expectedColor;
+
+        Assert.Equal(expectedColor, button.BackColor);
+        Assert.Equal(expectedColor, button.FlatAppearance.BorderColor);
+        Assert.Equal(expectedColor, button.FlatAppearance.CheckedBackColor);
+    }
+
     private class SubButton : Button
     {
         public new bool GetStyle(ControlStyles flag) => base.GetStyle(flag);
