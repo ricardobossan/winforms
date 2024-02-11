@@ -7,54 +7,55 @@ using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms.Tests;
 
-public class RadioButtonRenderingTests
+public class CheckBoxRendererTests
 {
     [WinFormsTheory]
-    [InlineData(RadioButtonState.CheckedNormal)]
-    [InlineData(RadioButtonState.CheckedPressed)]
-    public void RadioButtonRenderer_DrawRadioButton(RadioButtonState state)
+    [InlineData(CheckBoxState.CheckedNormal)]
+    [InlineData(CheckBoxState.MixedNormal)]
+    public void CheckBoxRenderer_DrawCheckBox(CheckBoxState state)
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
-        Point rectangle = new Point(10, 20);
+        Point point = new Point(10, 20);
 
-        RadioButtonRenderer.DrawRadioButton(graphics, rectangle, state);
+        CheckBoxRenderer.DrawCheckBox(graphics, point, state);
     }
 
     [WinFormsTheory]
-    [InlineData(RadioButtonState.CheckedNormal)]
-    [InlineData(RadioButtonState.CheckedPressed)]
-    public void RadioButtonRenderer_DrawRadioButton_OverloadWithSizeAndText(RadioButtonState state)
+    [InlineData(CheckBoxState.CheckedNormal)]
+    [InlineData(CheckBoxState.MixedNormal)]
+    public void CheckBoxRenderer_DrawCheckBox_OverloadWithSizeAndText(CheckBoxState state)
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
         Point point = new Point(10, 20);
         Rectangle bounds = new Rectangle(10, 20, 30, 40);
 
-        RadioButtonRenderer.DrawRadioButton(graphics, point, bounds, "Text", SystemFonts.DefaultFont, false, state);
+        CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, "Text", SystemFonts.DefaultFont, false, state);
     }
 
     [WinFormsTheory]
-    [InlineData(TextFormatFlags.Default, RadioButtonState.CheckedNormal)]
-    [InlineData(TextFormatFlags.Default, RadioButtonState.CheckedPressed)]
-    [InlineData(TextFormatFlags.PreserveGraphicsTranslateTransform, RadioButtonState.CheckedPressed)]
-    [InlineData(TextFormatFlags.TextBoxControl, RadioButtonState.UncheckedNormal)]
-    public void RadioButtonRenderer_DrawRadioButton_OverloadWithTextFormat(TextFormatFlags textFormat, RadioButtonState state)
+    [InlineData(TextFormatFlags.Default, CheckBoxState.CheckedNormal)]
+    [InlineData(TextFormatFlags.Default, CheckBoxState.MixedNormal)]
+    [InlineData(TextFormatFlags.GlyphOverhangPadding, CheckBoxState.MixedHot)]
+    [InlineData(TextFormatFlags.PreserveGraphicsTranslateTransform, CheckBoxState.CheckedPressed)]
+    [InlineData(TextFormatFlags.TextBoxControl, CheckBoxState.UncheckedNormal)]
+    public void CheckBoxRenderer_DrawCheckBox_OverloadWithTextFormat(TextFormatFlags textFormat, CheckBoxState state)
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
         Point point = new Point(10, 20);
         Rectangle bounds = new Rectangle(10, 20, 30, 40);
 
-        RadioButtonRenderer.DrawRadioButton(graphics, point, bounds, "Text", SystemFonts.DefaultFont, textFormat, false, state);
+        CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, "Text", SystemFonts.DefaultFont, textFormat, false, state);
     }
 
     [WinFormsFact]
     public unsafe void CaptureButton()
     {
-        using RadioButton RadioButton = new();
+        using CheckBox checkBox = new();
         using EmfScope emf = new();
-        RadioButton.PrintToMetafile(emf);
+        checkBox.PrintToMetafile(emf);
 
         List<ENHANCED_METAFILE_RECORD_TYPE> types = [];
         List<string> details = [];
@@ -74,12 +75,12 @@ public class RadioButtonRenderingTests
             return;
         }
 
-        using RadioButton RadioButton = new();
+        using CheckBox checkBox = new();
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
-        Rectangle bounds = RadioButton.Bounds;
+        Rectangle bounds = checkBox.Bounds;
 
-        RadioButton.PrintToMetafile(emf);
+        checkBox.PrintToMetafile(emf);
 
         emf.Validate(
             state,
@@ -118,12 +119,12 @@ public class RadioButtonRenderingTests
             return;
         }
 
-        using RadioButton RadioButton = new() { Text = "Hello" };
+        using CheckBox checkBox = new() { Text = "Hello" };
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
-        Rectangle bounds = RadioButton.Bounds;
+        Rectangle bounds = checkBox.Bounds;
 
-        RadioButton.PrintToMetafile(emf);
+        checkBox.PrintToMetafile(emf);
 
         emf.Validate(
             state,
@@ -159,8 +160,8 @@ public class RadioButtonRenderingTests
     public unsafe void CaptureButtonOnForm()
     {
         using Form form = new();
-        using RadioButton RadioButton = new();
-        form.Controls.Add(RadioButton);
+        using CheckBox checkBox = new();
+        form.Controls.Add(checkBox);
 
         using EmfScope emf = new();
         form.PrintToMetafile(emf);

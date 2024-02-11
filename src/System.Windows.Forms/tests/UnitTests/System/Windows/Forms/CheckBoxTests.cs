@@ -10,7 +10,7 @@ using Size = System.Drawing.Size;
 
 namespace System.Windows.Forms.Tests;
 
-public class CheckBoxTests
+public class CheckBoxTests : AbstractButtonBaseTests
 {
     [WinFormsFact]
     public void CheckBox_Ctor_Default()
@@ -556,53 +556,15 @@ public class CheckBoxTests
     }
 
     [WinFormsTheory]
-    [InlineData(Appearance.Button, FlatStyle.Standard)]
-    [InlineData(Appearance.Button, FlatStyle.Flat)]
-    [InlineData(Appearance.Button, FlatStyle.Popup)]
-    [InlineData(Appearance.Button, FlatStyle.System)]
-    [InlineData(Appearance.Normal, FlatStyle.Standard)]
-    [InlineData(Appearance.Normal, FlatStyle.Flat)]
-    [InlineData(Appearance.Normal, FlatStyle.Popup)]
-    [InlineData(Appearance.Normal, FlatStyle.System)]
-    public void CheckBox_OverChangeRectangle_ReturnsExpectedRectangle(Appearance appearance, FlatStyle flatStyle)
-    {
-        SubCheckBox checkBox = new SubCheckBox()
-        {
-            Appearance = appearance,
-            FlatStyle = flatStyle
-        };
-
-        Rectangle overChangeRectangle = new();
-        // ButtonBase.Adapter prohibits this
-        if (appearance == Appearance.Normal && (flatStyle != FlatStyle.Standard && flatStyle != FlatStyle.Popup && flatStyle != FlatStyle.Flat))
-        {
-            Assert.ThrowsAny<Exception>(() => overChangeRectangle = checkBox.OverChangeRectangle);
-
-            return;
-        }
-        else
-        {
-            overChangeRectangle = checkBox.OverChangeRectangle;
-        }
-
-        if (appearance == Appearance.Button)
-        {
-            if (flatStyle == FlatStyle.Standard)
-                Assert.Equal(new Rectangle(-1, -1, 1, 1), overChangeRectangle);
-            else
-            {
-                Assert.Equal(checkBox.ClientRectangle, overChangeRectangle);
-            }
-        }
-        else if (flatStyle == FlatStyle.Standard)
-        {
-            Assert.Equal(new Rectangle(-1, -1, 1, 1), overChangeRectangle);
-        }
-        else
-        {
-            Assert.Equal(checkBox.Adapter.CommonLayout().Layout().CheckBounds, overChangeRectangle);
-        }
-    }
+    [InlineData(typeof(SubCheckBox), Appearance.Button, FlatStyle.Standard)]
+    [InlineData(typeof(SubCheckBox), Appearance.Button, FlatStyle.Flat)]
+    [InlineData(typeof(SubCheckBox), Appearance.Button, FlatStyle.Popup)]
+    [InlineData(typeof(SubCheckBox), Appearance.Button, FlatStyle.System)]
+    [InlineData(typeof(SubCheckBox), Appearance.Normal, FlatStyle.Standard)]
+    [InlineData(typeof(SubCheckBox), Appearance.Normal, FlatStyle.Flat)]
+    [InlineData(typeof(SubCheckBox), Appearance.Normal, FlatStyle.Popup)]
+    [InlineData(typeof(SubCheckBox), Appearance.Normal, FlatStyle.System)]
+    public void CheckBox_OverChangeRectangle_Get(Type controlType, Appearance appearance, FlatStyle flatStyle) => base.ButtonBase_OverChangeRectangle_Get(controlType, appearance, flatStyle);
 
     [WinFormsTheory]
     [InlineData(Appearance.Button, FlatStyle.Standard)]
@@ -687,5 +649,10 @@ public class CheckBoxTests
         {
             Assert.False(result);
         }
+    }
+
+    protected override ButtonBase CreateButton()
+    {
+        return new SubCheckBox();
     }
 }

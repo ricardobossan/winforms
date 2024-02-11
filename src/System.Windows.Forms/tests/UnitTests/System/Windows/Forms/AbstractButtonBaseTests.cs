@@ -6,7 +6,6 @@ public abstract class AbstractButtonBaseTests
 {
     protected abstract ButtonBase CreateButton();
 
-    [WinFormsFact]
     public virtual void ButtonBase_Click_RaisesClickEvent()
     {
         using var button = (Button)CreateButton();
@@ -17,11 +16,7 @@ public abstract class AbstractButtonBaseTests
         Assert.True(clickEventRaised);
     }
 
-    [WinFormsTheory]
-    [InlineData(-1)]
-    [InlineData(0)]
-    [InlineData(1)]
-    public virtual unsafe void Button_Flat_ValidBorder(int borderSize)
+    public virtual unsafe void ButtonBase_Flat_ValidBorder(int borderSize)
     {
         using var control = CreateButton();
         control.FlatStyle = FlatStyle.Flat;
@@ -39,11 +34,7 @@ public abstract class AbstractButtonBaseTests
         }
     }
 
-    [WinFormsTheory]
-    [InlineData(255, 0, 0)]
-    [InlineData(0, 255, 0)]
-    [InlineData(0, 0, 255)]
-    public virtual unsafe void Button_Flat_ProperColor(int red, int green, int blue)
+    public virtual unsafe void ButtonBase_Flat_ProperColor(int red, int green, int blue)
     {
         Color expectedColor = Color.FromArgb(red, green, blue);
 
@@ -57,5 +48,48 @@ public abstract class AbstractButtonBaseTests
         Assert.Equal(expectedColor, control.BackColor);
         Assert.Equal(expectedColor, control.FlatAppearance.BorderColor);
         Assert.Equal(expectedColor, control.FlatAppearance.CheckedBackColor);
+    }
+
+    public virtual void ButtonBase_OverChangeRectangle_Get(Type controlType, Appearance appearance, FlatStyle flatStyle)
+    {
+        dynamic control = Activator.CreateInstance(controlType);
+
+        if (control == null)
+        {
+            return;
+        }
+
+        control.Appearance = appearance;
+        control.FlatStyle = flatStyle;
+
+        Rectangle overChangeRectangle;
+
+        // ButtonBase.Adapter prohibits this
+        if (appearance == Appearance.Normal && (flatStyle != FlatStyle.Standard && flatStyle != FlatStyle.Popup &&
+                                                flatStyle != FlatStyle.Flat))
+        {
+            Assert.ThrowsAny<Exception>(() => overChangeRectangle = control.OverChangeRectangle);
+
+            return;
+        }
+
+        overChangeRectangle = control.OverChangeRectangle;
+
+        if (control.FlatStyle == FlatStyle.Standard)
+        {
+            Assert.True(overChangeRectangle == new Rectangle(-1, -1, 1, 1));
+        }
+
+        if (control.Appearance == Appearance.Button)
+        {
+            if (control.FlatStyle != FlatStyle.Standard)
+            {
+                Assert.True(overChangeRectangle == control.ClientRectangle);
+            }
+        }
+        else if (control.FlatStyle != FlatStyle.Standard)
+        {
+            Assert.True(overChangeRectangle == control.Adapter.CommonLayout().Layout().CheckBounds);
+        }
     }
 }

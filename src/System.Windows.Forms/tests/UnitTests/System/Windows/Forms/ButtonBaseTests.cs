@@ -9247,9 +9247,6 @@ public class ButtonBaseTests : AbstractButtonBaseTests
         Assert.Equal(0, createdCallCount);
     }
 
-    public override void Button_Flat_ValidBorder(int borderSize) => base.Button_Flat_ValidBorder(borderSize);
-    public override void Button_Flat_ProperColor(int red, int green, int blue) => base.Button_Flat_ProperColor(red, green, blue);
-
     protected override ButtonBase CreateButton()
     {
         return new SubButton();

@@ -13,7 +13,7 @@ using Size = System.Drawing.Size;
 
 namespace System.Windows.Forms.Tests;
 
-public class ButtonTests
+public class ButtonTests : AbstractButtonBaseTests
 {
     [WinFormsFact]
     public void Button_Ctor_Default()
@@ -3648,6 +3648,23 @@ public class ButtonTests
         Assert.Equal(0, styleChangedCallCount);
         Assert.Equal(0, createdCallCount);
     }
+
+    protected override ButtonBase CreateButton()
+    {
+        return new SubButton();
+    }
+
+    [WinFormsTheory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(1)]
+    public void Button_Flat_ValidBorder(int borderSize) => base.ButtonBase_Flat_ValidBorder(borderSize);
+
+    [WinFormsTheory]
+    [InlineData(255, 0, 0)]
+    [InlineData(0, 255, 0)]
+    [InlineData(0, 0, 255)]
+    public void Button_Flat_ProperColor(int red, int green, int blue) => base.ButtonBase_Flat_ProperColor(red, green, blue);
 
     private class SubButton : Button
     {
