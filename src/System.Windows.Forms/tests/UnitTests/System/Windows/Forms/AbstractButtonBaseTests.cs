@@ -16,7 +16,7 @@ public abstract class AbstractButtonBaseTests
         Assert.True(clickEventRaised);
     }
 
-    public virtual unsafe void ButtonBase_Flat_ValidBorder(int borderSize)
+    public virtual void ButtonBase_FlatStyle_ValidFlatButtonBorder(int borderSize)
     {
         using var control = CreateButton();
         control.FlatStyle = FlatStyle.Flat;
@@ -34,7 +34,7 @@ public abstract class AbstractButtonBaseTests
         }
     }
 
-    public virtual unsafe void ButtonBase_Flat_ProperColor(int red, int green, int blue)
+    public virtual void ButtonBase_FlatStyle_ProperFlatButtonColor(int red, int green, int blue)
     {
         Color expectedColor = Color.FromArgb(red, green, blue);
 
