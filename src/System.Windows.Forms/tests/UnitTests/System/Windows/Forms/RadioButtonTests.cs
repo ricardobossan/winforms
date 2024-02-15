@@ -1637,8 +1637,5 @@ public class RadioButtonTests : AbstractButtonBaseTests
     [InlineData(typeof(SubRadioButton), Appearance.Normal, FlatStyle.System)]
     public void RadioButton_OverChangeRectangle_Get(Type controlType, Appearance appearance, FlatStyle flatStyle) => base.ButtonBase_OverChangeRectangle_Get(controlType, appearance, flatStyle);
 
-    protected override ButtonBase CreateButton()
-    {
-        return new SubRadioButton();
-    }
+    protected override ButtonBase CreateButton => new RadioButton();
 }

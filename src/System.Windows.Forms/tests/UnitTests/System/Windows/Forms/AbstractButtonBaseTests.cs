@@ -1,24 +1,18 @@
-﻿using System.Drawing;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Drawing;
 
 namespace System.Windows.Forms.Tests;
 
 public abstract class AbstractButtonBaseTests
 {
-    protected abstract ButtonBase CreateButton();
-
-    public virtual void ButtonBase_Click_RaisesClickEvent()
-    {
-        using var button = (Button)CreateButton();
-        bool clickEventRaised = false;
-        button.Click += (sender, e) => clickEventRaised = true;
-        button.PerformClick();
-
-        Assert.True(clickEventRaised);
-    }
+    protected abstract ButtonBase CreateButton { get; }
 
     public virtual void ButtonBase_FlatStyle_ValidFlatButtonBorder(int borderSize)
     {
-        using var control = CreateButton();
+        using var control = CreateButton;
+        ;
         control.FlatStyle = FlatStyle.Flat;
 
         Assert.Throws<NotSupportedException>(() => control.FlatAppearance.BorderColor = Color.Transparent);
@@ -38,7 +32,7 @@ public abstract class AbstractButtonBaseTests
     {
         Color expectedColor = Color.FromArgb(red, green, blue);
 
-        using var control = CreateButton();
+        using var control = CreateButton;
         control.FlatStyle = FlatStyle.Flat;
         control.BackColor = expectedColor;
 
@@ -52,9 +46,9 @@ public abstract class AbstractButtonBaseTests
 
     public virtual void ButtonBase_OverChangeRectangle_Get(Type controlType, Appearance appearance, FlatStyle flatStyle)
     {
-        dynamic control = Activator.CreateInstance(controlType);
+        using dynamic control = Activator.CreateInstance(controlType);
 
-        if (control == null)
+        if (control is null)
         {
             return;
         }
@@ -65,8 +59,10 @@ public abstract class AbstractButtonBaseTests
         Rectangle overChangeRectangle;
 
         // ButtonBase.Adapter prohibits this
-        if (appearance == Appearance.Normal && (flatStyle != FlatStyle.Standard && flatStyle != FlatStyle.Popup &&
-                                                flatStyle != FlatStyle.Flat))
+        if (appearance == Appearance.Normal
+            && (flatStyle != FlatStyle.Standard
+            && flatStyle != FlatStyle.Popup
+            && flatStyle != FlatStyle.Flat))
         {
             Assert.ThrowsAny<Exception>(() => overChangeRectangle = control.OverChangeRectangle);
 

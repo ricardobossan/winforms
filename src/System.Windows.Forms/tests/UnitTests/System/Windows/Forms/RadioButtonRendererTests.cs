@@ -7,7 +7,7 @@ using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms.Tests;
 
-public class RadioButtonRendererTests
+public class RadioButtonRendererTests : AbstractButtonBaseTests
 {
     [WinFormsTheory]
     [InlineData(RadioButtonState.CheckedNormal)]
@@ -54,9 +54,9 @@ public class RadioButtonRendererTests
     [WinFormsFact]
     public unsafe void CaptureButton()
     {
-        using RadioButton RadioButton = new();
+        using RadioButton radioButton = (RadioButton)CreateButton;
         using EmfScope emf = new();
-        RadioButton.PrintToMetafile(emf);
+        radioButton.PrintToMetafile(emf);
 
         List<ENHANCED_METAFILE_RECORD_TYPE> types = [];
         List<string> details = [];
@@ -76,12 +76,12 @@ public class RadioButtonRendererTests
             return;
         }
 
-        using RadioButton RadioButton = new();
+        using RadioButton radioButton = (RadioButton)CreateButton;
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
-        Rectangle bounds = RadioButton.Bounds;
+        Rectangle bounds = radioButton.Bounds;
 
-        RadioButton.PrintToMetafile(emf);
+        radioButton.PrintToMetafile(emf);
 
         emf.Validate(
             state,
@@ -120,12 +120,13 @@ public class RadioButtonRendererTests
             return;
         }
 
-        using RadioButton RadioButton = new() { Text = "Hello" };
+        using RadioButton radioButton = (RadioButton)CreateButton;
+        radioButton.Text = "Hello";
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
-        Rectangle bounds = RadioButton.Bounds;
+        Rectangle bounds = radioButton.Bounds;
 
-        RadioButton.PrintToMetafile(emf);
+        radioButton.PrintToMetafile(emf);
 
         emf.Validate(
             state,
@@ -161,12 +162,14 @@ public class RadioButtonRendererTests
     public unsafe void CaptureButtonOnForm()
     {
         using Form form = new();
-        using RadioButton RadioButton = new();
-        form.Controls.Add(RadioButton);
+        using RadioButton radioButton = (Forms.RadioButton)CreateButton;
+        form.Controls.Add(radioButton);
 
         using EmfScope emf = new();
         form.PrintToMetafile(emf);
 
         string details = emf.RecordsToString();
     }
+
+    protected override ButtonBase CreateButton => new RadioButton();
 }

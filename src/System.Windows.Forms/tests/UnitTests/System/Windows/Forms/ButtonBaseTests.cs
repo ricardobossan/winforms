@@ -15,9 +15,6 @@ namespace System.Windows.Forms.Tests;
 public class ButtonBaseTests : AbstractButtonBaseTests
 {
     [WinFormsFact]
-    public override void ButtonBase_Click_RaisesClickEvent() => base.ButtonBase_Click_RaisesClickEvent();
-
-    [WinFormsFact]
     public void ButtonBase_Ctor_Default()
     {
         using SubButtonBase control = new();
@@ -9247,11 +9244,6 @@ public class ButtonBaseTests : AbstractButtonBaseTests
         Assert.Equal(0, createdCallCount);
     }
 
-    protected override ButtonBase CreateButton()
-    {
-        return new SubButton();
-    }
-
     private class SubButton : Button
     {
         public new bool GetStyle(ControlStyles flag) => base.GetStyle(flag);
@@ -9384,4 +9376,6 @@ public class ButtonBaseTests : AbstractButtonBaseTests
 
         public new void WndProc(ref Message m) => base.WndProc(ref m);
     }
+
+    protected override ButtonBase CreateButton => new SubButtonBase();
 }

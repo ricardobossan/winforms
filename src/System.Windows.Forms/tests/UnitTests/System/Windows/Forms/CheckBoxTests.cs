@@ -534,7 +534,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
     [WinFormsFact]
     public void CheckBox_CheckedChangedEvent_Fires()
     {
-        CheckBox checkBox = new CheckBox();
+        using CheckBox checkBox = (CheckBox)CreateButton;
         bool eventFired = false;
 
         checkBox.CheckedChanged += (sender, args) => eventFired = true;
@@ -546,7 +546,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
     [WinFormsFact]
     public void CheckBox_CheckStateChangedEvent_Fires()
     {
-        CheckBox checkBox = new CheckBox();
+        using CheckBox checkBox = (CheckBox)CreateButton;
         bool eventFired = false;
 
         checkBox.CheckStateChanged += (sender, args) => eventFired = true;
@@ -606,7 +606,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
         control.TabIndex = 9999;
         form.Show();
 
-        MouseEventArgs eventArgs = new MouseEventArgs(MouseButtons.Left, 1, new Point(0, 0), 0);
+        MouseEventArgs eventArgs = new (MouseButtons.Left, 1, new Point(0, 0), 0);
 
         int callCountOnMouseUp = 0;
 
@@ -651,8 +651,5 @@ public class CheckBoxTests : AbstractButtonBaseTests
         }
     }
 
-    protected override ButtonBase CreateButton()
-    {
-        return new SubCheckBox();
-    }
+    protected override ButtonBase CreateButton => new CheckBox();
 }

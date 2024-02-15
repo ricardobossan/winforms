@@ -7,7 +7,7 @@ using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms.Tests;
 
-public class CheckBoxRendererTests
+public class CheckBoxRendererTests : AbstractButtonBaseTests
 {
     [WinFormsTheory]
     [InlineData(CheckBoxState.CheckedNormal)]
@@ -53,7 +53,7 @@ public class CheckBoxRendererTests
     [WinFormsFact]
     public unsafe void CaptureButton()
     {
-        using CheckBox checkBox = new();
+        using CheckBox checkBox = (CheckBox)CreateButton;
         using EmfScope emf = new();
         checkBox.PrintToMetafile(emf);
 
@@ -75,7 +75,7 @@ public class CheckBoxRendererTests
             return;
         }
 
-        using CheckBox checkBox = new();
+        using CheckBox checkBox = (CheckBox)CreateButton;
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
         Rectangle bounds = checkBox.Bounds;
@@ -119,7 +119,8 @@ public class CheckBoxRendererTests
             return;
         }
 
-        using CheckBox checkBox = new() { Text = "Hello" };
+        using CheckBox checkBox = (CheckBox)CreateButton  ;
+        checkBox.Text = "Hello";
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
         Rectangle bounds = checkBox.Bounds;
@@ -160,7 +161,7 @@ public class CheckBoxRendererTests
     public unsafe void CaptureButtonOnForm()
     {
         using Form form = new();
-        using CheckBox checkBox = new();
+        using CheckBox checkBox = (CheckBox)CreateButton;
         form.Controls.Add(checkBox);
 
         using EmfScope emf = new();
@@ -168,4 +169,6 @@ public class CheckBoxRendererTests
 
         string details = emf.RecordsToString();
     }
+
+    protected override ButtonBase CreateButton => new CheckBox();
 }

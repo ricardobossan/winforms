@@ -3578,6 +3578,17 @@ public class ButtonTests : AbstractButtonBaseTests
         yield return new object[] { FlatStyle.System, PARAM.FromLowHigh(123, 456), (IntPtr)250, 0 };
     }
 
+    [WinFormsFact]
+    public void ButtonBase_Click_RaisesEvent()
+    {
+        using var button = (SubButton)CreateButton;
+        bool clickEventRaised = false;
+        button.Click += (sender, e) => clickEventRaised = true;
+        button.PerformClick();
+
+        Assert.True(clickEventRaised);
+    }
+
     [WinFormsTheory]
     [MemberData(nameof(WndProc_ReflectCommandWithoutHandle_TestData))]
     public void Button_WndProc_InvokeReflectCommandWithoutHandle_Success(FlatStyle flatStyle, IntPtr wParam, IntPtr expectedResult, int expectedCallCount)
@@ -3649,11 +3660,6 @@ public class ButtonTests : AbstractButtonBaseTests
         Assert.Equal(0, createdCallCount);
     }
 
-    protected override ButtonBase CreateButton()
-    {
-        return new SubButton();
-    }
-
     [WinFormsTheory]
     [InlineData(-1)]
     [InlineData(0)]
@@ -3665,6 +3671,7 @@ public class ButtonTests : AbstractButtonBaseTests
     [InlineData(0, 255, 0)]
     [InlineData(0, 0, 255)]
     public void Button_Flat_ProperColor(int red, int green, int blue) => base.ButtonBase_FlatStyle_ProperFlatButtonColor(red, green, blue);
+    protected override ButtonBase CreateButton => new SubButton();
 
     private class SubButton : Button
     {
