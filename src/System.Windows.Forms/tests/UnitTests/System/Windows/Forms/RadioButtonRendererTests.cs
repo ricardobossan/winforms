@@ -16,7 +16,7 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new Point(10, 20);
+        Point point = new (10, 20);
 
         RadioButtonRenderer.DrawRadioButton(graphics, point, state);
     }
@@ -28,10 +28,10 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new Point(10, 20);
-        Rectangle bounds = new Rectangle(10, 20, 30, 40);
+        Point point = new (10, 20);
+        Rectangle bounds = new (10, 20, 30, 40);
 
-        RadioButtonRenderer.DrawRadioButton(graphics, point, bounds, "Text", SystemFonts.DefaultFont, false, state);
+        RadioButtonRenderer.DrawRadioButton(graphics, point, bounds, "Text", SystemFonts.DefaultFont, focused: false, state);
     }
 
     [WinFormsTheory]
@@ -44,8 +44,8 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new Point(10, 20);
-        Rectangle bounds = new Rectangle(10, 20, 30, 40);
+        Point point = new (10, 20);
+        Rectangle bounds = new (10, 20, 30, 40);
 
         RadioButtonRenderer.DrawRadioButton(graphics, point, bounds, "Text", SystemFonts.DefaultFont, textFormat, false,
             state);
@@ -162,7 +162,7 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
     public unsafe void CaptureButtonOnForm()
     {
         using Form form = new();
-        using RadioButton radioButton = (Forms.RadioButton)CreateButton();
+        using RadioButton radioButton = (RadioButton)CreateButton();
         form.Controls.Add(radioButton);
 
         using EmfScope emf = new();

@@ -532,7 +532,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
     }
 
     [WinFormsFact]
-    public void CheckBox_CheckedChangedEvent_Fires()
+    public void CheckBox_CheckedChangedEvent_Raised()
     {
         using CheckBox checkBox = (CheckBox)CreateButton();
         bool eventFired = false;
@@ -544,7 +544,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
     }
 
     [WinFormsFact]
-    public void CheckBox_CheckStateChangedEvent_Fires()
+    public void CheckBox_CheckStateChangedEvent_Raised()
     {
         using CheckBox checkBox = (CheckBox)CreateButton();
         bool eventFired = false;
@@ -578,8 +578,8 @@ public class CheckBoxTests : AbstractButtonBaseTests
     public void CheckBox_DownChangeRectangle_ReturnsExpectedRectangle(Appearance appearance, FlatStyle flatStyle)
     {
         CheckBox checkBox = (CheckBox)CreateButton();
-            checkBox.Appearance = appearance;
-            checkBox.FlatStyle = flatStyle;
+        checkBox.Appearance = appearance;
+        checkBox.FlatStyle = flatStyle;
 
         Rectangle downChangeRectangle = checkBox.DownChangeRectangle;
 
@@ -605,7 +605,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
         control.TabIndex = 9999;
         form.Show();
 
-        MouseEventArgs eventArgs = new (MouseButtons.Left, 1, new Point(0, 0), 0);
+        MouseEventArgs eventArgs = new(MouseButtons.Left, 1, new Point(0, 0), 0);
 
         int callCountOnMouseUp = 0;
 

@@ -3671,6 +3671,7 @@ public class ButtonTests : AbstractButtonBaseTests
     [InlineData(0, 255, 0)]
     [InlineData(0, 0, 255)]
     public void Button_Flat_ProperColor(int red, int green, int blue) => base.ButtonBase_FlatStyle_ProperFlatButtonColor(red, green, blue);
+
     protected override ButtonBase CreateButton() => new SubButton();
 
     private class SubButton : Button

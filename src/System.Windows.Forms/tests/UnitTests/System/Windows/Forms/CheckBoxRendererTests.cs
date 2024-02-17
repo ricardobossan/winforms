@@ -16,7 +16,7 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new Point(10, 20);
+        Point point = new (10, 20);
 
         CheckBoxRenderer.DrawCheckBox(graphics, point, state);
     }
@@ -28,8 +28,8 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new Point(10, 20);
-        Rectangle bounds = new Rectangle(10, 20, 30, 40);
+        Point point = new (10, 20);
+        Rectangle bounds = new (10, 20, 30, 40);
 
         CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, "Text", SystemFonts.DefaultFont, false, state);
     }
@@ -44,10 +44,10 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new Point(10, 20);
-        Rectangle bounds = new Rectangle(10, 20, 30, 40);
+        Point point = new (10, 20);
+        Rectangle bounds = new (10, 20, 30, 40);
 
-        CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, "Text", SystemFonts.DefaultFont, textFormat, false, state);
+        CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, "Text", SystemFonts.DefaultFont, textFormat, focused: false, state);
     }
 
     [WinFormsFact]
@@ -119,7 +119,7 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
             return;
         }
 
-        using CheckBox checkBox = (CheckBox)CreateButton()  ;
+        using CheckBox checkBox = (CheckBox)CreateButton();
         checkBox.Text = "Hello";
         using EmfScope emf = new();
         DeviceContextState state = new(emf);

@@ -9,10 +9,9 @@ public abstract class AbstractButtonBaseTests
 {
     protected abstract ButtonBase CreateButton();
 
-    public virtual void ButtonBase_FlatStyle_ValidFlatButtonBorder(int borderSize)
+    public void ButtonBase_FlatStyle_ValidFlatButtonBorder(int borderSize)
     {
         using var control = CreateButton();
-        ;
         control.FlatStyle = FlatStyle.Flat;
 
         Assert.Throws<NotSupportedException>(() => control.FlatAppearance.BorderColor = Color.Transparent);
@@ -28,7 +27,7 @@ public abstract class AbstractButtonBaseTests
         }
     }
 
-    public virtual void ButtonBase_FlatStyle_ProperFlatButtonColor(int red, int green, int blue)
+    public void ButtonBase_FlatStyle_ProperFlatButtonColor(int red, int green, int blue)
     {
         Color expectedColor = Color.FromArgb(red, green, blue);
 
@@ -61,8 +60,8 @@ public abstract class AbstractButtonBaseTests
         // ButtonBase.Adapter prohibits this
         if (appearance == Appearance.Normal
             && (flatStyle != FlatStyle.Standard
-            && flatStyle != FlatStyle.Popup
-            && flatStyle != FlatStyle.Flat))
+                && flatStyle != FlatStyle.Popup
+                && flatStyle != FlatStyle.Flat))
         {
             Assert.ThrowsAny<Exception>(() => overChangeRectangle = control.OverChangeRectangle);
 
