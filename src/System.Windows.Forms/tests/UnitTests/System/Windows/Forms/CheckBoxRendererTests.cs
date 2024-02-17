@@ -53,7 +53,7 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     [WinFormsFact]
     public unsafe void CaptureButton()
     {
-        using CheckBox checkBox = (CheckBox)CreateButton;
+        using CheckBox checkBox = (CheckBox)CreateButton();
         using EmfScope emf = new();
         checkBox.PrintToMetafile(emf);
 
@@ -75,7 +75,7 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
             return;
         }
 
-        using CheckBox checkBox = (CheckBox)CreateButton;
+        using CheckBox checkBox = (CheckBox)CreateButton();
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
         Rectangle bounds = checkBox.Bounds;
@@ -119,7 +119,7 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
             return;
         }
 
-        using CheckBox checkBox = (CheckBox)CreateButton  ;
+        using CheckBox checkBox = (CheckBox)CreateButton()  ;
         checkBox.Text = "Hello";
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
@@ -161,7 +161,7 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     public unsafe void CaptureButtonOnForm()
     {
         using Form form = new();
-        using CheckBox checkBox = (CheckBox)CreateButton;
+        using CheckBox checkBox = (CheckBox)CreateButton();
         form.Controls.Add(checkBox);
 
         using EmfScope emf = new();
@@ -170,5 +170,5 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
         string details = emf.RecordsToString();
     }
 
-    protected override ButtonBase CreateButton => new CheckBox();
+    protected override ButtonBase CreateButton() => new CheckBox();
 }

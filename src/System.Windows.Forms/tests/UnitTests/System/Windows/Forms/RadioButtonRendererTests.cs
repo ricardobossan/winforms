@@ -54,7 +54,7 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
     [WinFormsFact]
     public unsafe void CaptureButton()
     {
-        using RadioButton radioButton = (RadioButton)CreateButton;
+        using RadioButton radioButton = (RadioButton)CreateButton();
         using EmfScope emf = new();
         radioButton.PrintToMetafile(emf);
 
@@ -76,7 +76,7 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
             return;
         }
 
-        using RadioButton radioButton = (RadioButton)CreateButton;
+        using RadioButton radioButton = (RadioButton)CreateButton();
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
         Rectangle bounds = radioButton.Bounds;
@@ -120,7 +120,7 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
             return;
         }
 
-        using RadioButton radioButton = (RadioButton)CreateButton;
+        using RadioButton radioButton = (RadioButton)CreateButton();
         radioButton.Text = "Hello";
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
@@ -162,7 +162,7 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
     public unsafe void CaptureButtonOnForm()
     {
         using Form form = new();
-        using RadioButton radioButton = (Forms.RadioButton)CreateButton;
+        using RadioButton radioButton = (Forms.RadioButton)CreateButton();
         form.Controls.Add(radioButton);
 
         using EmfScope emf = new();
@@ -171,5 +171,5 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
         string details = emf.RecordsToString();
     }
 
-    protected override ButtonBase CreateButton => new RadioButton();
+    protected override ButtonBase CreateButton() => new RadioButton();
 }

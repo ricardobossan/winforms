@@ -534,7 +534,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
     [WinFormsFact]
     public void CheckBox_CheckedChangedEvent_Fires()
     {
-        using CheckBox checkBox = (CheckBox)CreateButton;
+        using CheckBox checkBox = (CheckBox)CreateButton();
         bool eventFired = false;
 
         checkBox.CheckedChanged += (sender, args) => eventFired = true;
@@ -546,7 +546,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
     [WinFormsFact]
     public void CheckBox_CheckStateChangedEvent_Fires()
     {
-        using CheckBox checkBox = (CheckBox)CreateButton;
+        using CheckBox checkBox = (CheckBox)CreateButton();
         bool eventFired = false;
 
         checkBox.CheckStateChanged += (sender, args) => eventFired = true;
@@ -577,11 +577,9 @@ public class CheckBoxTests : AbstractButtonBaseTests
     [InlineData(Appearance.Normal, FlatStyle.System)]
     public void CheckBox_DownChangeRectangle_ReturnsExpectedRectangle(Appearance appearance, FlatStyle flatStyle)
     {
-        SubCheckBox checkBox = new SubCheckBox()
-        {
-            Appearance = appearance,
-            FlatStyle = flatStyle
-        };
+        CheckBox checkBox = (CheckBox)CreateButton();
+            checkBox.Appearance = appearance;
+            checkBox.FlatStyle = flatStyle;
 
         Rectangle downChangeRectangle = checkBox.DownChangeRectangle;
 
@@ -600,8 +598,9 @@ public class CheckBoxTests : AbstractButtonBaseTests
     [InlineData(false)]
     public void CheckBox_LeftClick_MouseUpCounts(bool capture)
     {
-        Form form = new();
-        SubCheckBox control = new() { Capture = capture };
+        using Form form = new();
+        using SubCheckBox control = (SubCheckBox)CreateButton();
+        control.Capture = capture;
         form.Controls.Add(control);
         control.TabIndex = 9999;
         form.Show();
@@ -628,7 +627,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
     [InlineData(false, 'M', "&MnemonicText")]
     public void CheckBox_ProcessMnemonic_ValidCases(bool useMnemonic, char charCode, string buttonText)
     {
-        Form form = new();
+        using Form form = new();
         using SubCheckBox checkBox = new()
         {
             UseMnemonic = useMnemonic,
@@ -651,5 +650,5 @@ public class CheckBoxTests : AbstractButtonBaseTests
         }
     }
 
-    protected override ButtonBase CreateButton => new CheckBox();
+    protected override ButtonBase CreateButton() => new SubCheckBox();
 }

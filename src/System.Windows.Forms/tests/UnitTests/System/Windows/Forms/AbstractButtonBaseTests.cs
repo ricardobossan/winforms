@@ -7,11 +7,11 @@ namespace System.Windows.Forms.Tests;
 
 public abstract class AbstractButtonBaseTests
 {
-    protected abstract ButtonBase CreateButton { get; }
+    protected abstract ButtonBase CreateButton();
 
     public virtual void ButtonBase_FlatStyle_ValidFlatButtonBorder(int borderSize)
     {
-        using var control = CreateButton;
+        using var control = CreateButton();
         ;
         control.FlatStyle = FlatStyle.Flat;
 
@@ -32,7 +32,7 @@ public abstract class AbstractButtonBaseTests
     {
         Color expectedColor = Color.FromArgb(red, green, blue);
 
-        using var control = CreateButton;
+        using var control = CreateButton();
         control.FlatStyle = FlatStyle.Flat;
         control.BackColor = expectedColor;
 

@@ -123,7 +123,7 @@ public class RadioButtonTests : AbstractButtonBaseTests
     [WinFormsFact]
     public void RadioButton_CreateParams_GetDefault_ReturnsExpected()
     {
-        using SubRadioButton control = new();
+        using SubRadioButton control = (SubRadioButton)CreateButton();
         CreateParams createParams = control.CreateParams;
         Assert.Null(createParams.Caption);
         Assert.Equal("Button", createParams.ClassName);
@@ -145,7 +145,7 @@ public class RadioButtonTests : AbstractButtonBaseTests
     [InlineData(false, 0x5600000B)]
     public void RadioButton_CreateParams_GetUserPaint_ReturnsExpected(bool userPaint, int expectedStyle)
     {
-        using SubRadioButton control = new();
+        using SubRadioButton control = (SubRadioButton)CreateButton();
         control.SetStyle(ControlStyles.UserPaint, userPaint);
 
         CreateParams createParams = control.CreateParams;
@@ -1637,5 +1637,5 @@ public class RadioButtonTests : AbstractButtonBaseTests
     [InlineData(typeof(SubRadioButton), Appearance.Normal, FlatStyle.System)]
     public void RadioButton_OverChangeRectangle_Get(Type controlType, Appearance appearance, FlatStyle flatStyle) => base.ButtonBase_OverChangeRectangle_Get(controlType, appearance, flatStyle);
 
-    protected override ButtonBase CreateButton => new RadioButton();
+    protected override ButtonBase CreateButton() => new SubRadioButton();
 }

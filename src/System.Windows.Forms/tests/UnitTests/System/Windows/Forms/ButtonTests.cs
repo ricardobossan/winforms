@@ -3581,7 +3581,7 @@ public class ButtonTests : AbstractButtonBaseTests
     [WinFormsFact]
     public void ButtonBase_Click_RaisesEvent()
     {
-        using var button = (SubButton)CreateButton;
+        using var button = (SubButton)CreateButton();
         bool clickEventRaised = false;
         button.Click += (sender, e) => clickEventRaised = true;
         button.PerformClick();
@@ -3671,7 +3671,7 @@ public class ButtonTests : AbstractButtonBaseTests
     [InlineData(0, 255, 0)]
     [InlineData(0, 0, 255)]
     public void Button_Flat_ProperColor(int red, int green, int blue) => base.ButtonBase_FlatStyle_ProperFlatButtonColor(red, green, blue);
-    protected override ButtonBase CreateButton => new SubButton();
+    protected override ButtonBase CreateButton() => new SubButton();
 
     private class SubButton : Button
     {

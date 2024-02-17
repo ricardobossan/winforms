@@ -9377,5 +9377,5 @@ public class ButtonBaseTests : AbstractButtonBaseTests
         public new void WndProc(ref Message m) => base.WndProc(ref m);
     }
 
-    protected override ButtonBase CreateButton => new SubButtonBase();
+    protected override ButtonBase CreateButton() => new Button();
 }
