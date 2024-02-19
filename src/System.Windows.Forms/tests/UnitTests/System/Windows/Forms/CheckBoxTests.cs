@@ -638,16 +638,13 @@ public class CheckBoxTests : AbstractButtonBaseTests
 
         bool result = checkBox.ProcessMnemonic(charCode);
 
-        if (useMnemonic && charCode != '&' && buttonText.Contains($"&{charCode}", StringComparison.OrdinalIgnoreCase))
-        {
-            Assert.True(result);
+        bool actual = useMnemonic && charCode != '&' && buttonText.Contains($"&{charCode}", StringComparison.OrdinalIgnoreCase);
 
-            Assert.True(checkBox.Focused);
-        }
-        else
-        {
-            Assert.False(result);
-        }
+        Assert.Equal(actual, result);
+
+        Assert.Equal(actual, result && checkBox.Focused);
+
+        Assert.Equal(actual, result && checkBox.CheckState == CheckState.Checked);
     }
 
     protected override ButtonBase CreateButton() => new SubCheckBox();

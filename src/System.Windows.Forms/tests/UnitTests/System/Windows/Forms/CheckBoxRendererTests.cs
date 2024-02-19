@@ -16,7 +16,7 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new (10, 20);
+        Point point = new(10, 20);
 
         CheckBoxRenderer.DrawCheckBox(graphics, point, state);
     }
@@ -28,8 +28,8 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new (10, 20);
-        Rectangle bounds = new (10, 20, 30, 40);
+        Point point = new(10, 20);
+        Rectangle bounds = new(10, 20, 30, 40);
 
         CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, "Text", SystemFonts.DefaultFont, false, state);
     }
@@ -44,8 +44,8 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     {
         using Bitmap bitmap = new(100, 100);
         using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new (10, 20);
-        Rectangle bounds = new (10, 20, 30, 40);
+        Point point = new(10, 20);
+        Rectangle bounds = new(10, 20, 30, 40);
 
         CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, "Text", SystemFonts.DefaultFont, textFormat, focused: false, state);
     }
