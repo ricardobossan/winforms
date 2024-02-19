@@ -45,7 +45,7 @@ public abstract class AbstractButtonBaseTests
 
     public virtual void ButtonBase_OverChangeRectangle_Get(Type controlType, Appearance appearance, FlatStyle flatStyle)
     {
-        using dynamic control = Activator.CreateInstance(controlType);
+        using dynamic control = CreateButton();
 
         if (control is null)
         {
