@@ -1627,14 +1627,14 @@ public class RadioButtonTests : AbstractButtonBaseTests
     }
 
     [WinFormsTheory]
-    [InlineData(typeof(SubRadioButton), Appearance.Button, FlatStyle.Standard)]
-    [InlineData(typeof(SubRadioButton), Appearance.Button, FlatStyle.Flat)]
-    [InlineData(typeof(SubRadioButton), Appearance.Button, FlatStyle.Popup)]
-    [InlineData(typeof(SubRadioButton), Appearance.Button, FlatStyle.System)]
-    [InlineData(typeof(SubRadioButton), Appearance.Normal, FlatStyle.Standard)]
-    [InlineData(typeof(SubRadioButton), Appearance.Normal, FlatStyle.Flat)]
-    [InlineData(typeof(SubRadioButton), Appearance.Normal, FlatStyle.Popup)]
-    [InlineData(typeof(SubRadioButton), Appearance.Normal, FlatStyle.System)]
+    [InlineData(Appearance.Button, FlatStyle.Standard)]
+    [InlineData(Appearance.Button, FlatStyle.Flat)]
+    [InlineData(Appearance.Button, FlatStyle.Popup)]
+    [InlineData(Appearance.Button, FlatStyle.System)]
+    [InlineData(Appearance.Normal, FlatStyle.Standard)]
+    [InlineData(Appearance.Normal, FlatStyle.Flat)]
+    [InlineData(Appearance.Normal, FlatStyle.Popup)]
+    [InlineData(Appearance.Normal, FlatStyle.System)]
     public void RadioButton_OverChangeRectangle_Get(Appearance appearance, FlatStyle flatStyle) => base.ButtonBase_OverChangeRectangle_Get(appearance, flatStyle);
 
     protected override ButtonBase CreateButton() => new SubRadioButton();
