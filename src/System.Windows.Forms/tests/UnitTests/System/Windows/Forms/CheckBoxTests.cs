@@ -564,7 +564,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
     [InlineData(typeof(SubCheckBox), Appearance.Normal, FlatStyle.Flat)]
     [InlineData(typeof(SubCheckBox), Appearance.Normal, FlatStyle.Popup)]
     [InlineData(typeof(SubCheckBox), Appearance.Normal, FlatStyle.System)]
-    public void CheckBox_OverChangeRectangle_Get(Type controlType, Appearance appearance, FlatStyle flatStyle) => base.ButtonBase_OverChangeRectangle_Get(controlType, appearance, flatStyle);
+    public void CheckBox_OverChangeRectangle_Get(Type controlType, Appearance appearance, FlatStyle flatStyle) => base.ButtonBase_OverChangeRectangle_Get(appearance, flatStyle);
 
     [WinFormsTheory]
     [InlineData(Appearance.Button, FlatStyle.Standard)]

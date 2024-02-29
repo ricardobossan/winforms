@@ -43,7 +43,7 @@ public abstract class AbstractButtonBaseTests
         Assert.Equal(expectedColor, control.FlatAppearance.CheckedBackColor);
     }
 
-    public virtual void ButtonBase_OverChangeRectangle_Get(Type controlType, Appearance appearance, FlatStyle flatStyle)
+    public virtual void ButtonBase_OverChangeRectangle_Get(Appearance appearance, FlatStyle flatStyle)
     {
         using dynamic control = CreateButton();
 
