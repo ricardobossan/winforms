@@ -627,6 +627,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
     [InlineData(false, 'M', "&MnemonicText")]
     public void CheckBox_ProcessMnemonic_ValidCases(bool useMnemonic, char charCode, string buttonText)
     {
+        // Arrange
         using Form form = new();
         using SubCheckBox checkBox = new()
         {
@@ -636,15 +637,22 @@ public class CheckBoxTests : AbstractButtonBaseTests
         form.Controls.Add(checkBox);
         form.Show();
 
+        // Act
         bool result = checkBox.ProcessMnemonic(charCode);
 
-        bool actual = useMnemonic && charCode != '&' && buttonText.Contains($"&{charCode}", StringComparison.OrdinalIgnoreCase);
+        // Assert
+        if (result)
+        {
+            // Requirements for SUT to process mnemonic
+            bool requirements = (
+                useMnemonic
+                && charCode != '&'
+                && buttonText.Contains($"&{charCode}", StringComparison.OrdinalIgnoreCase)
+            );
 
-        Assert.Equal(actual, result);
-
-        Assert.Equal(actual, result && checkBox.Focused);
-
-        Assert.Equal(actual, result && checkBox.CheckState == CheckState.Checked);
+            Assert.Equal(checkBox.Focused, requirements);
+            Assert.Equal(checkBox.CheckState == CheckState.Checked, requirements);
+        }
     }
 
     protected override ButtonBase CreateButton() => new SubCheckBox();
