@@ -9,25 +9,27 @@ public abstract class AbstractButtonBaseTests
 {
     protected abstract ButtonBase CreateButton();
 
-    public void ButtonBase_FlatStyle_ValidFlatButtonBorder(int borderSize)
+    protected void ButtonBase_FlatStyle_ValidFlatButtonBorder(int borderSize)
     {
         using var control = CreateButton();
         control.FlatStyle = FlatStyle.Flat;
 
-        Assert.Throws<NotSupportedException>(() => control.FlatAppearance.BorderColor = Color.Transparent);
+        control.Invoking(y => y.FlatAppearance.BorderColor = Color.Transparent)
+            .Should().Throw<NotSupportedException>();
 
         if (borderSize < 0)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => control.FlatAppearance.BorderSize = borderSize);
+            control.Invoking(y => y.FlatAppearance.BorderSize = borderSize)
+                .Should().Throw<ArgumentOutOfRangeException>();
         }
         else
         {
             control.FlatAppearance.BorderSize = borderSize;
-            Assert.Equal(borderSize, control.FlatAppearance.BorderSize);
+            control.FlatAppearance.BorderSize.Should().Be(borderSize);
         }
     }
 
-    public void ButtonBase_FlatStyle_ProperFlatButtonColor(int red, int green, int blue)
+    protected void ButtonBase_FlatStyle_ProperFlatButtonColor(int red, int green, int blue)
     {
         Color expectedColor = Color.FromArgb(red, green, blue);
 
@@ -38,12 +40,12 @@ public abstract class AbstractButtonBaseTests
         control.FlatAppearance.CheckedBackColor = expectedColor;
         control.FlatAppearance.BorderColor = expectedColor;
 
-        Assert.Equal(expectedColor, control.BackColor);
-        Assert.Equal(expectedColor, control.FlatAppearance.BorderColor);
-        Assert.Equal(expectedColor, control.FlatAppearance.CheckedBackColor);
+        control.BackColor.Should().Be(expectedColor);
+        control.FlatAppearance.BorderColor.Should().Be(expectedColor);
+        control.FlatAppearance.CheckedBackColor.Should().Be(expectedColor);
     }
 
-    public virtual void ButtonBase_OverChangeRectangle_Get(Appearance appearance, FlatStyle flatStyle)
+    protected virtual void ButtonBase_OverChangeRectangle_Get(Appearance appearance, FlatStyle flatStyle)
     {
         using dynamic control = CreateButton();
 
@@ -63,7 +65,10 @@ public abstract class AbstractButtonBaseTests
                 && flatStyle != FlatStyle.Popup
                 && flatStyle != FlatStyle.Flat))
         {
-            Assert.ThrowsAny<Exception>(() => overChangeRectangle = control.OverChangeRectangle);
+            // Compiler requires casting lambda expression to delegate or expression
+            // before using it as a dynamically dispatched operation
+            Action act = () => overChangeRectangle = control.OverChangeRectangle;
+            act.Should().Throw<Exception>();
 
             return;
         }
@@ -72,19 +77,19 @@ public abstract class AbstractButtonBaseTests
 
         if (control.FlatStyle == FlatStyle.Standard)
         {
-            Assert.True(overChangeRectangle == new Rectangle(-1, -1, 1, 1));
+           overChangeRectangle.Should().Be(new Rectangle(-1,-1,1,1));
         }
 
         if (control.Appearance == Appearance.Button)
         {
             if (control.FlatStyle != FlatStyle.Standard)
             {
-                Assert.True(overChangeRectangle == control.ClientRectangle);
+                overChangeRectangle.Should().Be(control.ClientRectangle);
             }
         }
         else if (control.FlatStyle != FlatStyle.Standard)
         {
-            Assert.True(overChangeRectangle == control.Adapter.CommonLayout().Layout().CheckBounds);
+            overChangeRectangle.Should().Be(control.Adapter.CommonLayout().Layout().CheckBounds);
         }
     }
 }
