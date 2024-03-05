@@ -3586,7 +3586,7 @@ public class ButtonTests : AbstractButtonBaseTests
         button.Click += (sender, e) => clickEventRaised = true;
         button.PerformClick();
 
-        Assert.True(clickEventRaised);
+        clickEventRaised.Should().BeTrue();
     }
 
     [WinFormsTheory]

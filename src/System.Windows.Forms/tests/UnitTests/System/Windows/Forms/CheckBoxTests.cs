@@ -540,7 +540,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
         checkBox.CheckedChanged += (sender, args) => eventFired = true;
         checkBox.Checked = !checkBox.Checked;
 
-        Assert.True(eventFired);
+        eventFired.Should().BeTrue();
     }
 
     [WinFormsFact]
@@ -552,7 +552,7 @@ public class CheckBoxTests : AbstractButtonBaseTests
         checkBox.CheckStateChanged += (sender, args) => eventFired = true;
         checkBox.CheckState = checkBox.CheckState == CheckState.Checked ? CheckState.Unchecked : CheckState.Checked;
 
-        Assert.True(eventFired);
+        eventFired.Should().BeTrue();
     }
 
     [WinFormsTheory]
@@ -585,11 +585,11 @@ public class CheckBoxTests : AbstractButtonBaseTests
 
         if (appearance == Appearance.Button || flatStyle == FlatStyle.System)
         {
-            Assert.Equal(checkBox.ClientRectangle, downChangeRectangle);
+            downChangeRectangle.Should().Be(checkBox.ClientRectangle);
         }
         else
         {
-            Assert.Equal(checkBox.Adapter.CommonLayout().Layout().CheckBounds, downChangeRectangle);
+            downChangeRectangle.Should().Be(checkBox.Adapter.CommonLayout().Layout().CheckBounds);
         }
     }
 
@@ -611,13 +611,13 @@ public class CheckBoxTests : AbstractButtonBaseTests
 
         control.MouseUp += (sender, e) =>
         {
-            Assert.Same(control, sender);
-            Assert.Same(eventArgs, e);
+            sender.Should().Be(control);
+            e.Should().Be(eventArgs);
             callCountOnMouseUp++;
         };
 
         control.OnMouseUp(eventArgs);
-        Assert.True(callCountOnMouseUp == 1);
+        callCountOnMouseUp.Should().Be(1);
     }
 
     [WinFormsTheory]
@@ -641,18 +641,21 @@ public class CheckBoxTests : AbstractButtonBaseTests
         bool result = checkBox.ProcessMnemonic(charCode);
 
         // Assert
-        if (result)
-        {
-            // Requirements for SUT to process mnemonic
-            bool requirements = (
-                useMnemonic
-                && charCode != '&'
-                && buttonText.Contains($"&{charCode}", StringComparison.OrdinalIgnoreCase)
-            );
+        // Requirements for SUT to process mnemonic
+        bool requirements = (
+            useMnemonic
+            && charCode != '&'
+            && buttonText.Contains($"&{charCode}", StringComparison.OrdinalIgnoreCase)
+        );
 
-            Assert.Equal(checkBox.Focused, requirements);
-            Assert.Equal(checkBox.CheckState == CheckState.Checked, requirements);
+        if (!requirements)
+        {
+            return;
         }
+
+        result.Should().BeTrue();
+        checkBox.Focused.Should().BeTrue();
+        checkBox.CheckState.Should().Be(CheckState.Checked);
     }
 
     protected override ButtonBase CreateButton() => new SubCheckBox();
