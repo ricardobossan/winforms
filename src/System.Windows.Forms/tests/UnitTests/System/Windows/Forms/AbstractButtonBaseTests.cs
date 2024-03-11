@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Drawing;
+using System.Text;
+using System.Windows.Forms.Metafiles;
 
 namespace System.Windows.Forms.Tests;
 
@@ -90,6 +92,27 @@ public abstract class AbstractButtonBaseTests
         else if (control.FlatStyle != FlatStyle.Standard)
         {
             overChangeRectangle.Should().Be(control.Adapter.CommonLayout().Layout().CheckBounds);
+        }
+    }
+
+    internal void AppendToLogFile(EmfScope emf, string methodName)
+    {
+        StringBuilder sb = new();
+        string timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+        sb.AppendLine($"\n## {timestamp}\n");
+        sb.AppendLine("```c");
+        sb.AppendLine($"{emf.RecordsToString()}```");
+
+        // Should only be called from a method
+        string filePath = $"c:\\temp\\{methodName}.md";
+
+        string existingContent = File.Exists(filePath) ? File.ReadAllText(filePath) : string.Empty;
+
+        bool entryExists = existingContent.Contains($"## {timestamp}");
+
+        if (!entryExists)
+        {
+            File.AppendAllText(filePath, sb.ToString());
         }
     }
 }

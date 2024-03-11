@@ -12,26 +12,66 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     [WinFormsTheory]
     [InlineData(CheckBoxState.CheckedNormal)]
     [InlineData(CheckBoxState.MixedNormal)]
-    public void CheckBoxRenderer_DrawCheckBox(CheckBoxState state)
+    public void CheckBoxRenderer_DrawCheckBox(CheckBoxState cBState)
     {
-        using Bitmap bitmap = new(100, 100);
-        using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new(10, 20);
+        using Form form = new Form();
+        using CheckBox control = new();
+        form.Controls.Add(control);
 
-        CheckBoxRenderer.DrawCheckBox(graphics, point, state);
+        form.Handle.Should().NotBe(IntPtr.Zero);
+
+        using EmfScope emf = new();
+        DeviceContextState state = new(emf);
+        using Graphics graphics = Graphics.FromHdc((IntPtr)emf.HDC);
+
+        Point point = new(control.Location.X, control.Location.Y);
+        Rectangle bounds = control.Bounds;
+
+        CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, control.Text, SystemFonts.DefaultFont, false, cBState);
+
+        if (Application.RenderWithVisualStyles)
+        {
+            emf.Validate(
+                state,
+                Application.RenderWithVisualStyles
+                    ? Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_ALPHABLEND)
+                    : Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_STRETCHDIBITS), 1)
+            );
+    }
     }
 
     [WinFormsTheory]
     [InlineData(CheckBoxState.CheckedNormal)]
     [InlineData(CheckBoxState.MixedNormal)]
-    public void CheckBoxRenderer_DrawCheckBox_OverloadWithSizeAndText(CheckBoxState state)
+    public void CheckBoxRenderer_DrawCheckBox_OverloadWithSizeAndText(CheckBoxState cBState)
     {
-        using Bitmap bitmap = new(100, 100);
-        using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new(10, 20);
-        Rectangle bounds = new(10, 20, 30, 40);
+        using Form form = new Form();
+        using CheckBox control = new();
+        form.Controls.Add(control);
 
-        CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, "Text", SystemFonts.DefaultFont, false, state);
+        form.Handle.Should().NotBe(IntPtr.Zero);
+
+        using EmfScope emf = new();
+        DeviceContextState state = new(emf);
+        using Graphics graphics = Graphics.FromHdc((IntPtr)emf.HDC);
+
+        Point point = new(control.Location.X, control.Location.Y);
+        Rectangle bounds = control.Bounds;
+        control.Text = "Text";
+
+        CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, control.Text, SystemFonts.DefaultFont, false, cBState);
+
+        emf.Validate(
+            state,
+           Application.RenderWithVisualStyles
+               ? Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_ALPHABLEND)
+               : Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_STRETCHDIBITS), 1),
+            Validate.TextOut(
+                    control.Text,
+                    bounds: new Rectangle(41, 5, 20, 12),
+                    State.FontFace(SystemFonts.DefaultFont.Name)
+            )
+        );
     }
 
     [WinFormsTheory]
@@ -40,31 +80,39 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     [InlineData(TextFormatFlags.GlyphOverhangPadding, CheckBoxState.MixedHot)]
     [InlineData(TextFormatFlags.PreserveGraphicsTranslateTransform, CheckBoxState.CheckedPressed)]
     [InlineData(TextFormatFlags.TextBoxControl, CheckBoxState.UncheckedNormal)]
-    public void CheckBoxRenderer_DrawCheckBox_OverloadWithTextFormat(TextFormatFlags textFormat, CheckBoxState state)
+    public void CheckBoxRenderer_DrawCheckBox_VisualStyleOn_OverloadWithTextFormat(TextFormatFlags textFormat, CheckBoxState cBState)
     {
-        using Bitmap bitmap = new(100, 100);
-        using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new(10, 20);
-        Rectangle bounds = new(10, 20, 30, 40);
+        using Form form = new Form();
+        using CheckBox control = new();
+        form.Controls.Add(control);
 
-        CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, "Text", SystemFonts.DefaultFont, textFormat, focused: false, state);
-    }
+        form.Handle.Should().NotBe(IntPtr.Zero);
 
     [WinFormsFact]
     public unsafe void CaptureButton()
     {
         using CheckBox checkBox = (CheckBox)CreateButton();
         using EmfScope emf = new();
-        checkBox.PrintToMetafile(emf);
+        DeviceContextState state = new(emf);
+        using Graphics graphics = Graphics.FromHdc((IntPtr)emf.HDC);
 
-        List<ENHANCED_METAFILE_RECORD_TYPE> types = [];
-        List<string> details = [];
-        emf.Enumerate((ref EmfRecord record) =>
-        {
-            types.Add(record.Type);
-            details.Add(record.ToString());
-            return true;
-        });
+        Point point = new(control.Location.X, control.Location.Y);
+        Rectangle bounds = control.Bounds;
+        control.Text = "Text";
+
+        CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, control.Text, SystemFonts.DefaultFont, textFormat, false, cBState);
+
+        emf.Validate(
+            state,
+           Application.RenderWithVisualStyles
+               ? Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_ALPHABLEND)
+               : Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_STRETCHDIBITS), 1),
+            Validate.TextOut(
+                    control.Text,
+                    bounds: new Rectangle(3, 0, 20, 12),
+                    State.FontFace(SystemFonts.DefaultFont.Name)
+            )
+        );
     }
 
     [WinFormsFact]
