@@ -15,7 +15,7 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     public void CheckBoxRenderer_DrawCheckBox(CheckBoxState cBState)
     {
         using Form form = new Form();
-        using CheckBox control = new();
+        using CheckBox control = (CheckBox)CreateButton();
         form.Controls.Add(control);
 
         form.Handle.Should().NotBe(IntPtr.Zero);
@@ -46,7 +46,7 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     public void CheckBoxRenderer_DrawCheckBox_OverloadWithSizeAndText(CheckBoxState cBState)
     {
         using Form form = new Form();
-        using CheckBox control = new();
+        using CheckBox control = (CheckBox)CreateButton();
         form.Controls.Add(control);
 
         form.Handle.Should().NotBe(IntPtr.Zero);
@@ -83,15 +83,11 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
     public void CheckBoxRenderer_DrawCheckBox_VisualStyleOn_OverloadWithTextFormat(TextFormatFlags textFormat, CheckBoxState cBState)
     {
         using Form form = new Form();
-        using CheckBox control = new();
+        using CheckBox control = (CheckBox)CreateButton();
         form.Controls.Add(control);
 
         form.Handle.Should().NotBe(IntPtr.Zero);
 
-    [WinFormsFact]
-    public unsafe void CaptureButton()
-    {
-        using CheckBox checkBox = (CheckBox)CreateButton();
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
         using Graphics graphics = Graphics.FromHdc((IntPtr)emf.HDC);
@@ -115,48 +111,45 @@ public class CheckBoxRendererTests : AbstractButtonBaseTests
         );
     }
 
-    [WinFormsFact]
-    public unsafe void Button_VisualStyles_off_Default_LineDrawing()
+    [WinFormsTheory]
+    [InlineData(CheckBoxState.CheckedNormal, true)]
+    [InlineData(CheckBoxState.MixedNormal, true)]
+    [InlineData(CheckBoxState.CheckedNormal, false)]
+    [InlineData(CheckBoxState.MixedNormal, false)]
+    public void CheckBoxRenderer_DrawCheckBox_OverloadWithHandle(CheckBoxState cBState, bool focus)
     {
-        if (Application.RenderWithVisualStyles)
-        {
-            return;
-        }
+        using Form form = new Form();
+        using CheckBox control = (CheckBox)CreateButton();
+        form.Controls.Add(control);
+        form.Handle.Should().NotBe(IntPtr.Zero);
 
         using CheckBox checkBox = (CheckBox)CreateButton();
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
-        Rectangle bounds = checkBox.Bounds;
+        using Graphics graphics = Graphics.FromHdc((IntPtr)emf.HDC);
+        Point point = new(control.Location.X, control.Location.Y);
+        Rectangle bounds = control.Bounds;
+        control.Text = "Text";
 
-        checkBox.PrintToMetafile(emf);
+        CheckBoxRenderer.DrawCheckBox(graphics, point, bounds, control.Text, SystemFonts.DefaultFont, TextFormatFlags.Default, focus, cBState, HWND.Null);
 
         emf.Validate(
             state,
-            Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_BITBLT), 1),
-            Validate.LineTo(
-                new(bounds.Right - 1, 0), new(0, 0),
-                State.PenColor(SystemColors.ControlLightLight)),
-            Validate.LineTo(
-                new(0, 0), new(0, bounds.Bottom - 1),
-                State.PenColor(SystemColors.ControlLightLight)),
-            Validate.LineTo(
-                new(0, bounds.Bottom - 1), new(bounds.Right - 1, bounds.Bottom - 1),
-                State.PenColor(SystemColors.ControlDarkDark)),
-            Validate.LineTo(
-                new(bounds.Right - 1, bounds.Bottom - 1), new(bounds.Right - 1, -1),
-                State.PenColor(SystemColors.ControlDarkDark)),
-            Validate.LineTo(
-                new(bounds.Right - 2, 1), new(1, 1),
-                State.PenColor(SystemColors.Control)),
-            Validate.LineTo(
-                new(1, 1), new(1, bounds.Bottom - 2),
-                State.PenColor(SystemColors.Control)),
-            Validate.LineTo(
-                new(1, bounds.Bottom - 2), new(bounds.Right - 2, bounds.Bottom - 2),
-                State.PenColor(SystemColors.ControlDark)),
-            Validate.LineTo(
-                new(bounds.Right - 2, bounds.Bottom - 2), new(bounds.Right - 2, 0),
-                State.PenColor(SystemColors.ControlDark)));
+            Application.RenderWithVisualStyles
+                ? Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_ALPHABLEND)
+                : Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_STRETCHDIBITS), 1),
+            Validate.TextOut(
+                control.Text,
+                    bounds: new Rectangle(3, 0, 20, 12),
+                    State.FontFace(SystemFonts.DefaultFont.Name)
+            ),
+            (focus
+                ? Validate.PolyPolygon16(new(new(bounds.X, bounds.Y), new Size(-1, -1)))
+                : null)!,
+            (focus
+                ? Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_STRETCHDIBITS), 2)
+                : null)!
+            );
     }
 
     [WinFormsFact]

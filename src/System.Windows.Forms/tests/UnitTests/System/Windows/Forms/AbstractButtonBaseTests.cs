@@ -79,7 +79,7 @@ public abstract class AbstractButtonBaseTests
 
         if (control.FlatStyle == FlatStyle.Standard)
         {
-           overChangeRectangle.Should().Be(new Rectangle(-1,-1,1,1));
+            overChangeRectangle.Should().Be(new Rectangle(-1, -1, 1, 1));
         }
 
         if (control.Appearance == Appearance.Button)
@@ -95,24 +95,18 @@ public abstract class AbstractButtonBaseTests
         }
     }
 
-    internal void AppendToLogFile(EmfScope emf, string methodName)
+    internal void LogTestMethodToFile(EmfScope emf, string methodName, params object[] parameters)
     {
         StringBuilder sb = new();
         string timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
-        sb.AppendLine($"\n## {timestamp}\n");
-        sb.AppendLine("```c");
-        sb.AppendLine($"{emf.RecordsToString()}```");
 
-        // Should only be called from a method
+        sb.Append($"## {timestamp}");
+        sb.Append(". Parameters: ");
+        sb.AppendJoin(", ", parameters);
+        sb.AppendLine("\r\n\r\n```c");
+        sb.AppendLine($"{emf.RecordsToString()}```\r\n");
         string filePath = $"c:\\temp\\{methodName}.md";
 
-        string existingContent = File.Exists(filePath) ? File.ReadAllText(filePath) : string.Empty;
-
-        bool entryExists = existingContent.Contains($"## {timestamp}");
-
-        if (!entryExists)
-        {
-            File.AppendAllText(filePath, sb.ToString());
-        }
+        File.AppendAllText(filePath, sb.ToString());
     }
 }
