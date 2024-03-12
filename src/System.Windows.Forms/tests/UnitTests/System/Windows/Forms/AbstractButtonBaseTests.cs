@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms.Metafiles;
 
 namespace System.Windows.Forms.Tests;
 
@@ -93,20 +91,5 @@ public abstract class AbstractButtonBaseTests
         {
             overChangeRectangle.Should().Be(control.Adapter.CommonLayout().Layout().CheckBounds);
         }
-    }
-
-    internal void LogTestMethodToFile(EmfScope emf, string methodName, params object[] parameters)
-    {
-        StringBuilder sb = new();
-        string timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
-
-        sb.Append($"## {timestamp}");
-        sb.Append(". Parameters: ");
-        sb.AppendJoin(", ", parameters);
-        sb.AppendLine("\r\n\r\n```c");
-        sb.AppendLine($"{emf.RecordsToString()}```\r\n");
-        string filePath = $"c:\\temp\\{methodName}.md";
-
-        File.AppendAllText(filePath, sb.ToString());
     }
 }
