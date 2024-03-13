@@ -12,26 +12,66 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
     [WinFormsTheory]
     [InlineData(RadioButtonState.CheckedNormal)]
     [InlineData(RadioButtonState.CheckedPressed)]
-    public void RadioButtonRenderer_DrawRadioButton(RadioButtonState state)
+    public void RadioButtonRenderer_DrawRadioButton(RadioButtonState rBState)
     {
-        using Bitmap bitmap = new(100, 100);
-        using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new (10, 20);
+        using Form form = new Form();
+        using RadioButton control = (RadioButton)CreateButton();
+        form.Controls.Add(control);
 
-        RadioButtonRenderer.DrawRadioButton(graphics, point, state);
+        form.Handle.Should().NotBe(IntPtr.Zero);
+
+        using EmfScope emf = new();
+        DeviceContextState state = new(emf);
+        using Graphics graphics = Graphics.FromHdc((IntPtr)emf.HDC);
+
+        Point point = new(control.Location.X, control.Location.Y);
+        Rectangle bounds = control.Bounds;
+
+        RadioButtonRenderer.DrawRadioButton(graphics, point, rBState);
+
+        if (Application.RenderWithVisualStyles)
+        {
+            emf.Validate(
+                state,
+                Application.RenderWithVisualStyles
+                    ? Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_ALPHABLEND)
+                    : Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_STRETCHDIBITS), 1)
+            );
+        }
     }
 
     [WinFormsTheory]
     [InlineData(RadioButtonState.CheckedNormal)]
     [InlineData(RadioButtonState.CheckedPressed)]
-    public void RadioButtonRenderer_DrawRadioButton_OverloadWithSizeAndText(RadioButtonState state)
+    public void RadioButtonRenderer_DrawRadioButton_OverloadWithSizeAndText(RadioButtonState rBState)
     {
-        using Bitmap bitmap = new(100, 100);
-        using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new (10, 20);
-        Rectangle bounds = new (10, 20, 30, 40);
+        using Form form = new Form();
+        using RadioButton control = (RadioButton)CreateButton();
+        form.Controls.Add(control);
 
-        RadioButtonRenderer.DrawRadioButton(graphics, point, bounds, "Text", SystemFonts.DefaultFont, focused: false, state);
+        form.Handle.Should().NotBe(IntPtr.Zero);
+
+        using EmfScope emf = new();
+        DeviceContextState state = new(emf);
+        using Graphics graphics = Graphics.FromHdc((IntPtr)emf.HDC);
+
+        Point point = new(control.Location.X, control.Location.Y);
+        Rectangle bounds = control.Bounds;
+        control.Text = "Text";
+
+        RadioButtonRenderer.DrawRadioButton(graphics, point, bounds, control.Text, SystemFonts.DefaultFont, false, rBState);
+
+        emf.Validate(
+            state,
+            Application.RenderWithVisualStyles
+                ? Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_ALPHABLEND)
+                : Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_STRETCHDIBITS), 1),
+            Validate.TextOut(
+                control.Text,
+                bounds: new Rectangle(41, 5, 20, 12),
+                State.FontFace(SystemFonts.DefaultFont.Name)
+            )
+        );
     }
 
     [WinFormsTheory]
@@ -40,135 +80,60 @@ public class RadioButtonRendererTests : AbstractButtonBaseTests
     [InlineData(TextFormatFlags.PreserveGraphicsTranslateTransform, RadioButtonState.CheckedPressed)]
     [InlineData(TextFormatFlags.TextBoxControl, RadioButtonState.UncheckedNormal)]
     public void RadioButtonRenderer_DrawRadioButton_OverloadWithTextFormat(TextFormatFlags textFormat,
-        RadioButtonState state)
+        RadioButtonState rBState)
     {
-        using Bitmap bitmap = new(100, 100);
-        using Graphics graphics = Graphics.FromImage(bitmap);
-        Point point = new (10, 20);
-        Rectangle bounds = new (10, 20, 30, 40);
+        using Form form = new Form();
+        using RadioButton control = (RadioButton)CreateButton();
+        form.Controls.Add(control);
 
-        RadioButtonRenderer.DrawRadioButton(graphics, point, bounds, "Text", SystemFonts.DefaultFont, textFormat, false,
-            state);
-    }
+        form.Handle.Should().NotBe(IntPtr.Zero);
 
-    [WinFormsFact]
-    public unsafe void CaptureButton()
-    {
-        using RadioButton radioButton = (RadioButton)CreateButton();
-        using EmfScope emf = new();
-        radioButton.PrintToMetafile(emf);
-
-        List<ENHANCED_METAFILE_RECORD_TYPE> types = [];
-        List<string> details = [];
-        emf.Enumerate((ref EmfRecord record) =>
-        {
-            types.Add(record.Type);
-            details.Add(record.ToString());
-            return true;
-        });
-    }
-
-    [WinFormsFact]
-    public unsafe void Button_VisualStyles_off_Default_LineDrawing()
-    {
-        if (Application.RenderWithVisualStyles)
-        {
-            return;
-        }
-
-        using RadioButton radioButton = (RadioButton)CreateButton();
         using EmfScope emf = new();
         DeviceContextState state = new(emf);
-        Rectangle bounds = radioButton.Bounds;
+        using Graphics graphics = Graphics.FromHdc((IntPtr)emf.HDC);
 
-        radioButton.PrintToMetafile(emf);
+        Point point = new(control.Location.X, control.Location.Y);
+        Rectangle bounds = control.Bounds;
+        control.Text = "Text";
+
+        RadioButtonRenderer.DrawRadioButton(graphics, point, bounds, control.Text, SystemFonts.DefaultFont, textFormat, false, rBState);
+    }
+
+    [WinFormsTheory]
+    [BoolData()]
+    public void RadioButtonRenderer_DrawRadioButton_OverloadWithHandle(bool focus)
+    {
+        using Form form = new Form();
+        using RadioButton control = (RadioButton)CreateButton();
+        form.Controls.Add(control);
+        form.Handle.Should().NotBe(IntPtr.Zero);
+
+        using EmfScope emf = new();
+        DeviceContextState state = new(emf);
+        using Graphics graphics = Graphics.FromHdc((IntPtr)emf.HDC);
+        Point point = new(control.Location.X, control.Location.Y);
+        Rectangle bounds = control.Bounds;
+        control.Text = "Text";
+
+        RadioButtonRenderer.DrawRadioButton(graphics, point, bounds, control.Text, SystemFonts.DefaultFont, TextFormatFlags.Default, focus, RadioButtonState.CheckedNormal, HWND.Null);
 
         emf.Validate(
             state,
-            Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_BITBLT), 1),
-            Validate.LineTo(
-                new(bounds.Right - 1, 0), new(0, 0),
-                State.PenColor(SystemColors.ControlLightLight)),
-            Validate.LineTo(
-                new(0, 0), new(0, bounds.Bottom - 1),
-                State.PenColor(SystemColors.ControlLightLight)),
-            Validate.LineTo(
-                new(0, bounds.Bottom - 1), new(bounds.Right - 1, bounds.Bottom - 1),
-                State.PenColor(SystemColors.ControlDarkDark)),
-            Validate.LineTo(
-                new(bounds.Right - 1, bounds.Bottom - 1), new(bounds.Right - 1, -1),
-                State.PenColor(SystemColors.ControlDarkDark)),
-            Validate.LineTo(
-                new(bounds.Right - 2, 1), new(1, 1),
-                State.PenColor(SystemColors.Control)),
-            Validate.LineTo(
-                new(1, 1), new(1, bounds.Bottom - 2),
-                State.PenColor(SystemColors.Control)),
-            Validate.LineTo(
-                new(1, bounds.Bottom - 2), new(bounds.Right - 2, bounds.Bottom - 2),
-                State.PenColor(SystemColors.ControlDark)),
-            Validate.LineTo(
-                new(bounds.Right - 2, bounds.Bottom - 2), new(bounds.Right - 2, 0),
-                State.PenColor(SystemColors.ControlDark)));
-    }
-
-    [WinFormsFact]
-    public unsafe void Button_VisualStyles_off_Default_WithText_LineDrawing()
-    {
-        if (Application.RenderWithVisualStyles)
-        {
-            return;
-        }
-
-        using RadioButton radioButton = (RadioButton)CreateButton();
-        radioButton.Text = "Hello";
-        using EmfScope emf = new();
-        DeviceContextState state = new(emf);
-        Rectangle bounds = radioButton.Bounds;
-
-        radioButton.PrintToMetafile(emf);
-
-        emf.Validate(
-            state,
-            Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_BITBLT),
-            Validate.TextOut("Hello"),
-            Validate.LineTo(
-                new(bounds.Right - 1, 0), new(0, 0),
-                State.PenColor(SystemColors.ControlLightLight)),
-            Validate.LineTo(
-                new(0, 0), new(0, bounds.Bottom - 1),
-                State.PenColor(SystemColors.ControlLightLight)),
-            Validate.LineTo(
-                new(0, bounds.Bottom - 1), new(bounds.Right - 1, bounds.Bottom - 1),
-                State.PenColor(SystemColors.ControlDarkDark)),
-            Validate.LineTo(
-                new(bounds.Right - 1, bounds.Bottom - 1), new(bounds.Right - 1, -1),
-                State.PenColor(SystemColors.ControlDarkDark)),
-            Validate.LineTo(
-                new(bounds.Right - 2, 1), new(1, 1),
-                State.PenColor(SystemColors.Control)),
-            Validate.LineTo(
-                new(1, 1), new(1, bounds.Bottom - 2),
-                State.PenColor(SystemColors.Control)),
-            Validate.LineTo(
-                new(1, bounds.Bottom - 2), new(bounds.Right - 2, bounds.Bottom - 2),
-                State.PenColor(SystemColors.ControlDark)),
-            Validate.LineTo(
-                new(bounds.Right - 2, bounds.Bottom - 2), new(bounds.Right - 2, 0),
-                State.PenColor(SystemColors.ControlDark)));
-    }
-
-    [WinFormsFact]
-    public unsafe void CaptureButtonOnForm()
-    {
-        using Form form = new();
-        using RadioButton radioButton = (RadioButton)CreateButton();
-        form.Controls.Add(radioButton);
-
-        using EmfScope emf = new();
-        form.PrintToMetafile(emf);
-
-        string details = emf.RecordsToString();
+            Application.RenderWithVisualStyles
+                ? Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_ALPHABLEND)
+                : Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_STRETCHDIBITS), 1),
+            Validate.TextOut(
+                control.Text,
+                    bounds: new Rectangle(3, 0, 20, 12),
+                    State.FontFace(SystemFonts.DefaultFont.Name)
+            ),
+            (focus
+                ? Validate.PolyPolygon16(new(new(bounds.X, bounds.Y), new Size(-1, -1)))
+                : null)!,
+            (focus
+                ? Validate.Repeat(Validate.SkipType(ENHANCED_METAFILE_RECORD_TYPE.EMR_STRETCHDIBITS), 2)
+                : null)!
+            );
     }
 
     protected override ButtonBase CreateButton() => new RadioButton();
