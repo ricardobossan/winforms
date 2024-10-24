@@ -539,7 +539,6 @@ public class TabPageTests
     {
         Task.Run(() =>
         {
-
             try
             {
                 Application.EnableVisualStyles();
