@@ -2098,6 +2098,7 @@ public partial class ToolTip : Component, IExtenderProvider, IHandle<HWND>
         {
             _cancelled = false;
 
+            File.AppendAllText(@"C:\Users\v-rbossan\source\repos\logs", $"Text: {e.AssociatedControl?.Text}; SetWindowPos:  [rect.left: {rect.left}, rect.top: {rect.top}, currentTooltipSize.Width: {currentTooltipSize.Width}, currentTooltipSize.Height: {currentTooltipSize.Height}]\n");
             // Only width/height changes are respected, so set top,left to what we got earlier
             PInvoke.SetWindowPos(
                 this,
@@ -2334,13 +2335,16 @@ public partial class ToolTip : Component, IExtenderProvider, IHandle<HWND>
                         }
 
                         Control? control = window as Control ?? Control.FromHandle(window.Handle);
+
+                        string? toolTipText = GetToolTip(control);
+                        File.AppendAllText(@"C:\Users\v-rbossan\source\repos\logs", $"ToolTip text: {toolTipText}, bounds: {bounds}, control: {control}, window: {window}, font: {font}\n");
                         OnDraw(
                             new DrawToolTipEventArgs(
                                 graphics,
                                 window,
                                 control,
                                 bounds,
-                                GetToolTip(control),
+                                toolTipText,
                                 BackColor,
                                 ForeColor,
                                 font));
