@@ -18,20 +18,29 @@
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
 
     <!-- Do not build this project when doing a .NET product build. -->
-    <!-- The files for this project have been removed from the .NET product due to licensing issues. -->
     <ExcludeFromDotNetBuild>true</ExcludeFromDotNetBuild>
     <IsTestUtilityProject>true</IsTestUtilityProject>
+
+    <!-- Multi-targeting to .NET 10 (Windows) and .NET Framework 4.8 -->
+    <TargetFrameworks>net10.0-windows;net48</TargetFrameworks>
+    <UseWPF>false</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Runtime.Serialization.Formatters" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
     <ProjectReference Include="..\..\..\..\..\System.Windows.Forms.Design\src\System.Windows.Forms.Design.csproj" />
     <ProjectReference Include="..\..\..\..\src\System.Windows.Forms.csproj" />
     <ProjectReference Include="..\..\..\..\..\System.Drawing.Common\src\System.Drawing.Common.csproj" />
     <ProjectReference Include="..\DesignSurfaceExt\DesignSurfaceExt.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,3 +55,4 @@
   </ItemGroup>
 
 </Project>
+
