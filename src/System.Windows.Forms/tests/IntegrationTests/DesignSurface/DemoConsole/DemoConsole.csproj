@@ -22,20 +22,17 @@
     <IsTestUtilityProject>true</IsTestUtilityProject>
 
     <!-- Multi-targeting to .NET 10 (Windows) and .NET Framework 4.8 -->
-    <TargetFrameworks>net10.0-windows;net48</TargetFrameworks>
+    <TargetFrameworks>$(ServerTargetFramework);$(ClientTargetFramework)</TargetFrameworks>
     <UseWPF>false</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Runtime.Serialization.Formatters" />
-  </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
     <ProjectReference Include="..\..\..\..\..\System.Windows.Forms.Design\src\System.Windows.Forms.Design.csproj" />
     <ProjectReference Include="..\..\..\..\src\System.Windows.Forms.csproj" />
     <ProjectReference Include="..\..\..\..\..\System.Drawing.Common\src\System.Drawing.Common.csproj" />
     <ProjectReference Include="..\DesignSurfaceExt\DesignSurfaceExt.csproj" />
+    <PackageReference Include="System.Runtime.Serialization.Formatters" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">

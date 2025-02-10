@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFrameworks>net10.0;net10.0-windows;net48</TargetFrameworks>
     <!-- this project is intentionally empty, it's only built so that we can 
          use its resources when assembling the Accessibility dll -->
   </PropertyGroup>

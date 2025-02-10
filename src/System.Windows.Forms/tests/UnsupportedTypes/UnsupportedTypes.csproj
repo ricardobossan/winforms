@@ -15,6 +15,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <EnableXlfLocalization>false</EnableXlfLocalization>
     <UpdateXlfOnBuild>false</UpdateXlfOnBuild>
+    <TargetFrameworks>net472;net10.0-windows;net48</TargetFrameworks>
   </PropertyGroup>
 
 </Project>
