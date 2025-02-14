@@ -1,14 +1,15 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#pragma warning disable IDE0005
 using System.ComponentModel.Design;
-using System.Drawing;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.ComponentModel.Design.Serialization;
 using System.Windows.Forms.Design;
-#pragma warning disable IDE0005
+using System.ComponentModel.Design.Serialization;
+
+#if NETFRAMEWORK
+using System.Drawing;
+using System.Windows.Forms;
+#endif
 
 namespace DesignSurfaceExt;
 

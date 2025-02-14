@@ -3,8 +3,10 @@
 
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using System.Reflection;
+#if NETCOREAPP
+using System.Collections.Immutable;
+#endif
 
 namespace System.ComponentModel.Design;
 

@@ -7,6 +7,7 @@
     <UpdateXlfOnBuild>false</UpdateXlfOnBuild>
     <ApplicationIcon>dll.ico</ApplicationIcon>
     <SignAssembly>false</SignAssembly>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
     <NoWarn>$(NoWarn),SA1633</NoWarn>
     <Copyright>Copyright © Paolo Foti 2008</Copyright>
@@ -27,7 +28,7 @@
     <UseWindowsForms>true</UseWindowsForms>
 
     <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>12.0</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetCurrent)-windows'">
@@ -38,9 +39,14 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
-    <Reference Include='System.Windows.Forms'/>
-    <Reference Include='System.Drawing'/>
-    <Reference Include='System.Design'/>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Design" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
+    <EmbeddedResource Include="..\desc.xml">
+      <LogicalName>desc.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
