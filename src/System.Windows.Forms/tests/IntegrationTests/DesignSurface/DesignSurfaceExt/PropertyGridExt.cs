@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #pragma warning disable IDE0005
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Reflection;
 using System.Windows.Forms;
@@ -39,6 +40,7 @@ public class PropertyGridExt : PropertyGrid
         base.Dispose(disposing);
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IDesignerHost DesignerHost
     {
         get

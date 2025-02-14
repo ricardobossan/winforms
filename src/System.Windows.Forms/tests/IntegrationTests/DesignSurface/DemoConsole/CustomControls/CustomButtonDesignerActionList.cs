@@ -3,7 +3,9 @@
 
 using System.ComponentModel;
 using System.ComponentModel.Design;
+#if NETFRAMEWORK
 using System.Drawing;
+#endif
 
 namespace TestConsole;
 

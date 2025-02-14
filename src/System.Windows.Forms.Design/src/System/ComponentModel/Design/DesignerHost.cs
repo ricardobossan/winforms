@@ -14,9 +14,6 @@ namespace System.ComponentModel.Design;
 ///  design time <see cref="IContainer"/> object. The services this class implements are generally non-removable (they
 ///  work as a unit so removing them would break things).
 /// </summary>
-#if NETFRAMEWORK
-[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-#endif
 internal sealed partial class DesignerHost : Container, IDesignerLoaderHost2, IDesignerHostTransactionState, IComponentChangeService, IReflect
 {
     // State flags for the state of the designer host
