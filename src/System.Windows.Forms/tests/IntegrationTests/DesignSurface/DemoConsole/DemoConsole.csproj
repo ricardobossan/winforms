@@ -29,6 +29,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetCurrent)-windows'">
@@ -56,12 +57,6 @@
     <Reference Include='System.Windows.Forms'/>
     <Reference Include='System.Drawing'/>
     <Reference Include='System.Design'/>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
-    <EmbeddedResource Include="..\desc.xml">
-      <LogicalName>desc.xml</LogicalName>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
