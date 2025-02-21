@@ -115,7 +115,4 @@
     <SystemFormatsAsn1PackageVersion>8.0.1</SystemFormatsAsn1PackageVersion>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
-    <PackageVersion Include="System.Collections.Immutable" Version="9.0.2" />
-  </ItemGroup>
 </Project>

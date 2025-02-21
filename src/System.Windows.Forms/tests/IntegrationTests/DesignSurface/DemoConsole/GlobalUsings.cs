@@ -5,6 +5,7 @@ global using System.ComponentModel;
 global using System.ComponentModel.Design;
 global using System.Windows.Forms.Design;
 global using DesignSurfaceExt;
+global using System.Diagnostics;
 global using Timer = System.Windows.Forms.Timer;
 
 #if NETFRAMEWORK
