@@ -25,10 +25,10 @@
     <TargetFrameworks>$(NetCurrent)-windows;net481</TargetFrameworks>
     <!-- Unset TargetFramework as this property gets set in Directory.Build.props. This is necessary to avoid over-building. -->
     <TargetFramework />
-    <UseWindowsForms>true</UseWindowsForms>
 
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetCurrent)-windows'">

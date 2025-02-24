@@ -11,9 +11,3 @@ global using System.Reflection;
 global using System.Collections;
 global using System.Collections.Concurrent;
 global using System.Collections.Immutable;
-
-#if NETFRAMEWORK
-global using System.Drawing;
-global using System.Windows.Forms;
-#endif
-

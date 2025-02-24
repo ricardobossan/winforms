@@ -33,7 +33,6 @@ public class PropertyGridExt : PropertyGrid
         base.Dispose(disposing);
     }
 
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public IDesignerHost DesignerHost
     {
         get
