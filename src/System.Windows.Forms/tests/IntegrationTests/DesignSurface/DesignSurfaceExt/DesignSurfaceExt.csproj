@@ -9,7 +9,7 @@
     <SignAssembly>false</SignAssembly>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
-    <NoWarn>$(NoWarn),SA1633</NoWarn>
+    <NoWarn>$(NoWarn),SA1633;CA1824</NoWarn>
     <Copyright>Copyright © Paolo Foti 2008</Copyright>
     <Company />
     <Authors>Paolo Foti</Authors>
