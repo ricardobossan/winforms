@@ -38,7 +38,7 @@
     <ProjectReference Include="..\..\..\..\src\System.Windows.Forms.csproj" />
   </ItemGroup>
   
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
     <PackageReference Include="System.Collections.Immutable" VersionOverride="9.0.2" />
   </ItemGroup>
 
