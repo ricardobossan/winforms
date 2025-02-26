@@ -30,7 +30,6 @@
 
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
-    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetCurrent)-windows'">
@@ -60,7 +59,7 @@
     <Reference Include='System.Design'/>
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
     <PackageReference Include="System.Resources.Extensions" VersionOverride="5.0.0"/>
   </ItemGroup>
 
