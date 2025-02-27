@@ -5,10 +5,9 @@
   <PropertyGroup>
     <EnableXlfLocalization>false</EnableXlfLocalization>
     <UpdateXlfOnBuild>false</UpdateXlfOnBuild>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
     <SuppressLicenseValidation>true</SuppressLicenseValidation>
-    <NoWarn>$(NoWarn),SA1633;CA1824</NoWarn>
+    <NoWarn>$(NoWarn);SA1633</NoWarn>
 
     <!-- Do not build this project when doing a .NET product build. -->
     <!-- The files for this project have been removed from the .NET product due to licensing issues. -->
@@ -22,17 +21,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net481'">
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-
+  <ItemGroup Condition="'$(TargetFramework)' == '$(NetCurrent)-windows'">
+    <PackageReference Include="System.Runtime.Serialization.Formatters" />
+  </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetCurrent)-windows'">
     <ProjectReference Include="..\..\..\..\..\System.Design\src\System.Design.Facade.csproj" />
     <ProjectReference Include="..\..\..\..\..\System.Drawing.Design\src\System.Drawing.Design.Facade.csproj" />
     <ProjectReference Include="..\..\..\..\..\System.Windows.Forms.Design\src\System.Windows.Forms.Design.csproj" />
     <ProjectReference Include="..\..\..\..\src\System.Windows.Forms.csproj" />
+    <ProjectReference Include="..\..\..\..\..\System.Drawing.Common\src\System.Drawing.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
@@ -40,9 +38,11 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Design" />
   </ItemGroup>
-    
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
-    <PackageReference Include="System.Collections.Immutable" VersionOverride="9.0.2" />
+    <PackageReference Include="System.Resources.Extensions" VersionOverride="5.0.0"/>
   </ItemGroup>
+
+
 
 </Project>

@@ -33,9 +33,12 @@ internal sealed class NameCreationServiceImp : INameCreationService
                     count++;
                     try
                     {
-#pragma warning disable IDE0057
-                        int value = int.Parse(name.Substring(type.Name.Length));
-#pragma warning disable IDE0057
+                        int value;
+#if NETFRAMEWORK
+                        value = int.Parse(name.Substring(type.Name.Length));
+#elif NETCOREAPP
+                        value = int.Parse(name[type.Name.Length..]);
+#endif
                         if (value < min)
                             min = value;
                         if (value > max)
