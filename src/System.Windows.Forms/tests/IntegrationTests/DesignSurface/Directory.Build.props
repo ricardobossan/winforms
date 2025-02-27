@@ -43,6 +43,4 @@
     <PackageReference Include="System.Resources.Extensions" VersionOverride="5.0.0"/>
   </ItemGroup>
 
-
-
 </Project>
