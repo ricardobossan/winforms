@@ -288,6 +288,7 @@ public partial class MainForm : Form
                         rootComponent.Text = "Root Component hosted by the DesignSurface N.6";
 
                         ToolStripContainer toolStripContainer = surface.CreateControl<ToolStripContainer>(new Size(800, 200), new Point(0, 60));
+
                         toolStripContainer.Dock = DockStyle.Fill;
 
                         ToolStrip toolStrip1 = surface.CreateControl<ToolStrip>(new Size(400, 50), new Point(0, 0));
@@ -380,6 +381,25 @@ public partial class MainForm : Form
 
                         panel.Controls.Add(bindingNavigator);
 #endif
+
+                        IDesignerHost designerHost = surface.GetIDesignerHost();
+                        DesignerActionService designerActionService = (DesignerActionService)designerHost.GetService(typeof(DesignerActionService));
+
+                        DesignerActionListCollection dataGridViewActionLists = designerActionService.GetComponentActions(toolStripContainer);
+
+                        foreach (DesignerActionList actionList in dataGridViewActionLists)
+                        {
+                            actionList.AutoShow = false;
+                        }
+
+                        DesignerActionListCollection toolStripContainerActionLists = designerActionService.GetComponentActions(toolStripContainer);
+
+                        foreach (DesignerActionList actionList in toolStripContainerActionLists)
+                        {
+                            actionList.AutoShow = false;
+                        }
+
+
                     }
 
                     break;
