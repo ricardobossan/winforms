@@ -9,6 +9,7 @@ using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms.Layout;
+using System.Windows.Forms.Rendering.Animation;
 using Windows.Win32.System.Variant;
 using Windows.Win32.UI.Accessibility;
 
@@ -89,6 +90,7 @@ public abstract partial class TextBoxBase : Control
 
     // Pointer presence for modern Hover strokes.
     private bool _hovered;
+    private AnimatedFocusIndicatorRenderer? _focusIndicatorRenderer;
 
     private static int[]? s_shortcutsToDisable;
 
@@ -1690,6 +1692,8 @@ public abstract partial class TextBoxBase : Control
         _textBoxFlags[s_setSelectionOnHandleCreated] = true;
         // Update text selection cached values to be restored when recreating the handle.
         GetSelectionStartAndLength(out _selectionStart, out _selectionLength);
+        _focusIndicatorRenderer?.Dispose();
+        _focusIndicatorRenderer = null;
         base.OnHandleDestroyed(e);
     }
 
@@ -1699,6 +1703,7 @@ public abstract partial class TextBoxBase : Control
         // UpdateStyles may synchronously provoke WM_NCCALCSIZE, so it must observe a cleared latch.
         _triggerNewClientSizeRequest = false;
         base.OnVisualStylesModeChanged(e);
+        _focusIndicatorRenderer?.Synchronize(Focused, invalidate: false);
         AdjustHeight(false);
 
         RecalculateVisualStylesClientArea();
@@ -1797,7 +1802,7 @@ public abstract partial class TextBoxBase : Control
     {
         if (EffectiveVisualStylesMode >= VisualStylesMode.Net11)
         {
-            InvalidateVisualStylesFrame();
+            SetModernFocusState(focused: true);
         }
 
         base.OnGotFocus(e);
@@ -1807,7 +1812,7 @@ public abstract partial class TextBoxBase : Control
     {
         if (EffectiveVisualStylesMode >= VisualStylesMode.Net11)
         {
-            InvalidateVisualStylesFrame();
+            SetModernFocusState(focused: false);
         }
 
         base.OnLostFocus(e);
@@ -2664,6 +2669,12 @@ public abstract partial class TextBoxBase : Control
             AccentColor: Application.SystemVisualSettings.AccentColor,
             DeviceDpi: DeviceDpi);
         ModernFieldStroke stroke = ModernFieldStrokeResolver.GetStroke(strokeContext);
+        ModernFieldStroke unfocusedStroke = ModernFieldStrokeResolver.GetStroke(
+            strokeContext with { Focused = false });
+        float focusAmount = FocusIndicatorRenderer.FocusAmount;
+        Color bottomColor = FocusIndicatorRenderer.GetCurrentColor(
+            unfocusedStroke.BottomColor,
+            GetVisualStylesFocusColor(Application.SystemVisualSettings.HighContrastEnabled));
 
         int sideThickness = Math.Max(1, (int)MathF.Round(stroke.SideTopThicknessDip * DeviceDpi / 96f));
         int bottomThickness = Math.Max(1, (int)MathF.Round(stroke.BottomThicknessDip * DeviceDpi / 96f));
@@ -2675,7 +2686,7 @@ public abstract partial class TextBoxBase : Control
         using var clientBackgroundBrush = clientBackColor.GetCachedSolidBrushScope();
         using var adornerBrush = adornerColor.GetCachedSolidBrushScope();
         using var adornerPen = adornerColor.GetCachedPenScope(sideThickness);
-        using var flatBorderPen = stroke.BottomColor.GetCachedPenScope(sideThickness);
+        using var flatBorderPen = bottomColor.GetCachedPenScope(sideThickness);
 
         Rectangle bounds = new(
             x: 0,
@@ -2782,7 +2793,7 @@ public abstract partial class TextBoxBase : Control
                 deflatedBounds,
                 cornerRadius,
                 bottomThickness);
-            using var bottomEdgeBrush = stroke.BottomColor.GetCachedSolidBrushScope();
+            using var bottomEdgeBrush = bottomColor.GetCachedSolidBrushScope();
 
             // Cover the bottom and scrollbar corner outside native-rendering exclusions.
             GraphicsState bottomEdgeState = offscreenGraphics.Save();
@@ -2797,7 +2808,7 @@ public abstract partial class TextBoxBase : Control
         }
         else if (BorderStyle == BorderStyle.FixedSingle)
         {
-            using var bottomPen = stroke.BottomColor.GetCachedPenScope(bottomThickness);
+            using var bottomPen = bottomColor.GetCachedPenScope(bottomThickness);
             offscreenGraphics.DrawLine(
                 bottomPen,
                 deflatedBounds.Left,
@@ -2805,10 +2816,10 @@ public abstract partial class TextBoxBase : Control
                 deflatedBounds.Right,
                 deflatedBounds.Bottom);
         }
-        else if (BorderStyle == BorderStyle.None && stroke.HasFocusIndicator)
+        else if (BorderStyle == BorderStyle.None && focusAmount > 0f)
         {
             // None represents focus with a straight underline.
-            using var bottomPen = stroke.BottomColor.GetCachedPenScope(bottomThickness);
+            using var bottomPen = bottomColor.GetCachedPenScope(bottomThickness);
             offscreenGraphics.DrawLine(bottomPen, deflatedBounds.Left, deflatedBounds.Bottom, deflatedBounds.Right, deflatedBounds.Bottom);
         }
 
@@ -3035,6 +3046,16 @@ public abstract partial class TextBoxBase : Control
             lprcUpdate: null,
             hrgnUpdate: HRGN.Null,
             flags: REDRAW_WINDOW_FLAGS.RDW_FRAME | REDRAW_WINDOW_FLAGS.RDW_INVALIDATE);
+    }
+
+    private AnimatedFocusIndicatorRenderer FocusIndicatorRenderer
+        => _focusIndicatorRenderer ??= new(this, InvalidateVisualStylesFrame);
+
+    private void SetModernFocusState(bool focused)
+    {
+        FocusIndicatorRenderer.SetFocused(
+            focused,
+            animate: SystemInformation.UIEffectsEnabled && !SystemInformation.HighContrast);
     }
 
     private void WmReflectCommand(ref Message m)

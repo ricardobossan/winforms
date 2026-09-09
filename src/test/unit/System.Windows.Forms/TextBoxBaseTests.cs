@@ -433,6 +433,43 @@ public partial class TextBoxBaseTests
     }
 
     [WinFormsFact]
+    public void TextBoxBase_ModernVisualStylesMode_FocusTransitionReversesFromCurrentBlend()
+    {
+        using SystemVisualSettingsTestScope settingsScope = new(clientAreaAnimationEnabled: true);
+        using SubTextBox control = new()
+        {
+            VisualStylesMode = VisualStylesMode.Net11
+        };
+        control.CreateControl();
+
+        dynamic accessor = ((TextBoxBase)control).TestAccessor.Dynamic;
+        accessor.SetModernFocusState(true);
+        Rendering.Animation.AnimatedFocusIndicatorRenderer renderer =
+            accessor._focusIndicatorRenderer;
+
+        if (!SystemInformation.UIEffectsEnabled)
+        {
+            renderer.FocusAmount.Should().Be(1f);
+            renderer.IsRunning.Should().BeFalse();
+            accessor.SetModernFocusState(false);
+            renderer.FocusAmount.Should().Be(0f);
+            return;
+        }
+
+        renderer.IsRunning.Should().BeTrue();
+        renderer.AnimationProc(0.5f);
+        renderer.FocusAmount.Should().BeApproximately(0.75f, 0.001f);
+
+        accessor.SetModernFocusState(false);
+        renderer.AnimationProc(0.5f);
+
+        renderer.FocusAmount.Should().BeApproximately(0.1875f, 0.001f);
+        renderer.EndAnimation();
+        renderer.IsRunning.Should().BeFalse();
+        renderer.FocusAmount.Should().Be(0f);
+    }
+
+    [WinFormsFact]
     public void TextBoxBase_ModernGeometry_UsesInternalInsetBeforeUserPadding()
     {
         using SubTextBox control = new()
