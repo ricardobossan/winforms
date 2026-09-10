@@ -29,6 +29,8 @@ public abstract partial class UpDownBase : ContainerControl
     // internal chrome inset used by TextBoxBase; only the gap between the two buttons is additional.
     private const int ModernButtonGroupSpacingLogical = 2;
     private const int ModernFocusBandHeight = 4;
+    // Keep the focused underline at the same logical weight as the modern text field.
+    private const int ModernFocusEdgeThickness = 3;
     private const BorderStyle DefaultBorderStyle = BorderStyle.Fixed3D;
     private const LeftRightAlignment DefaultUpDownAlign = LeftRightAlignment.Right;
     private const int DefaultTimerInterval = 500;
@@ -380,7 +382,7 @@ public abstract partial class UpDownBase : ContainerControl
 
             if (_borderStyle == BorderStyle.Fixed3D)
             {
-                int roundedChromeMinimumHeight = LogicalToDeviceUnits(ModernControlVisualStyles.UpDownCornerRadius)
+                int roundedChromeMinimumHeight = LogicalToDeviceUnits(ModernControlVisualStyles.FieldCornerRadius)
                     + LogicalToDeviceUnits(ModernControlVisualStyles.BorderThickness)
                     + LogicalToDeviceUnits(ModernControlVisualStyles.InternalChromeInset);
 
@@ -1081,13 +1083,20 @@ public abstract partial class UpDownBase : ContainerControl
             return;
         }
 
-        int cornerRadius = LogicalToDeviceUnits(ModernControlVisualStyles.UpDownCornerRadius);
+        BufferedGraphicsContext bufferContext = BufferedGraphicsManager.Current;
+        using BufferedGraphics buffer = bufferContext.Allocate(e.Graphics, bounds);
+        // Modern chrome is painted to one buffer and copied once to avoid flicker on the live surface.
+        Graphics graphics = buffer.Graphics;
+
+        // Match the field rounding so the frame reads like the modern text box.
+        int cornerRadius = LogicalToDeviceUnits(ModernControlVisualStyles.FieldCornerRadius);
         int borderThickness = LogicalToDeviceUnits(ModernControlVisualStyles.BorderThickness);
 
         Color parentBackColor = Parent?.BackColor ?? BackColor;
         Color clientBackColor = BackColor;
+        // Use the lighter composed stroke for the enabled edge so the up-down stays close to the modern field.
         Color adornerColor = Enabled
-            ? ModernControlColorMath.TextControlBorderColor
+            ? ModernControlColorMath.GetFieldStrokeStrong(clientBackColor, Application.IsDarkModeEnabled)
             : ModernControlColorMath.GetDisabledBorderColor();
 
         using var clientBackgroundBrush = clientBackColor.GetCachedSolidBrushScope();
@@ -1097,7 +1106,6 @@ public abstract partial class UpDownBase : ContainerControl
         deflatedBounds.Width -= 1;
         deflatedBounds.Height -= 1;
 
-        Graphics graphics = e.Graphics;
         using GraphicsStateScope graphicsState = new(graphics);
         graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -1150,15 +1158,23 @@ public abstract partial class UpDownBase : ContainerControl
 
         if (_borderStyle == BorderStyle.Fixed3D && canRenderRoundedChrome)
         {
-            Color focusColor = ModernFocusColor;
-            FocusIndicatorRenderer.DrawRoundedFocusIndicator(
-                graphics,
-                deflatedBounds,
-                cornerRadius,
-                borderThickness,
-                LogicalToDeviceUnits(ModernFocusBandHeight),
-                adornerColor,
-                focusColor);
+            // Paint the focus accent on the shared bottom edge so it stays level and follows the curve without lifting onto the sides.
+            if (FocusIndicatorRenderer.FocusAmount > 0f)
+            {
+                int bottomEdgeThickness = LogicalToDeviceUnits(ModernFocusEdgeThickness);
+                Color bottomEdgeColor = FocusIndicatorRenderer.GetCurrentColor(adornerColor, ModernFocusColor);
+
+                using GraphicsPath bottomEdgePath = TextBoxBase.CreateVisualStylesBottomEdgePath(
+                    deflatedBounds,
+                    cornerRadius,
+                    bottomEdgeThickness);
+                using var bottomEdgeBrush = bottomEdgeColor.GetCachedSolidBrushScope();
+
+                GraphicsState bottomEdgeState = graphics.Save();
+                graphics.SetClip(bounds, CombineMode.Replace);
+                graphics.FillPath(bottomEdgeBrush, bottomEdgePath);
+                graphics.Restore(bottomEdgeState);
+            }
         }
         else if (Focused && _borderStyle == BorderStyle.Fixed3D)
         {
@@ -1177,6 +1193,8 @@ public abstract partial class UpDownBase : ContainerControl
                 deflatedBounds.Right,
                 deflatedBounds.Bottom - 1);
         }
+
+        buffer.Render(e.Graphics);
     }
 
     private AnimatedFocusIndicatorRenderer FocusIndicatorRenderer
